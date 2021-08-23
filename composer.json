@@ -1,0 +1,28 @@
+{
+    "name": "nouvu/framework",
+    "description": "Nouvu Framework",
+    "type": "project",
+    "license": "MIT",
+	"homepage": "",
+	"keywords": [ "PHP 8.0", "Nouvu", "Framework" ],
+    "authors": [
+        {
+            "name": "MouseZver",
+            "email": "mouse-zver@xaker.ru",
+			"role": "Developer"
+        }
+    ],
+	"require": {
+		"php": ">=8.0",
+		"nouvu/lerma": "~v7.0.0",
+		"nouvu/config": "^v4.0",
+		"nouvu/query-storing": "^2.0",
+		"nouvu/container": "^1.1",
+		"nouvu/logger": "^2.0",
+		"symfony/http-foundation": "^5.3",
+        "symfony/routing": "^5.3"
+	},
+	"autoload": {
+        "psr-4": { "Nouvu\\Web\\": "Nouvu" }
+    }
+}
