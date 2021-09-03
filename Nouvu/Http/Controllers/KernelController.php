@@ -2,9 +2,10 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Foundation\Http;
+namespace Nouvu\Web\Http\Controllers;
 
 use Nouvu\Web\Foundation\Application AS App;
+use Nouvu\Web\View\Repository\Commit AS CommitRepository;
 
 class KernelController
 {
@@ -24,7 +25,7 @@ class KernelController
 		return $this;
 	}
 	
-	public function action(): array
+	public function action(): CommitRepository
 	{
 		$method = new \ReflectionMethod( self :: $BaseController, $this -> InputController -> getActionName() );
 		

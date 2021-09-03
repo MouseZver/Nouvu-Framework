@@ -19,9 +19,9 @@ class RouteCollection
 	/*
 		- https://symfony.com/doc/4.3/components/routing.html
 	*/
-	public function add( string $name, array $route )
+	public function add( string | int $name, array $route )
 	{
-		$this -> collection -> add( $name, new Route( ...array_values ( $route ) ) );
+		$this -> collection -> add( ( string ) $name, new Route( ...array_values ( $route ) ) );
 	}
 	
 	public function get(): Collection

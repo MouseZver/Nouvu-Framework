@@ -105,3 +105,22 @@ public function terminate($request, $response)
 
 	$this->app->terminate();
 }
+
+
+
+
+
+$KernelController = new KernelController( $this -> app );
+		
+$commit = $KernelController -> getController( Controllers :: class ) -> action();
+{
+	return CommitRepository :: class <-- BaseController :: class
+		- render
+		- redirect
+		- json
+}
+
+$this -> app -> view -> terminal( $commit );
+{
+	
+}

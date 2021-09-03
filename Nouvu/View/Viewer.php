@@ -6,156 +6,105 @@ namespace Nouvu\Web\View;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Nouvu\Web\Foundation\User\UserInterface;
-use Nouvu\Web\View\Builder\ShortTag;
-use Nouvu\Web\View\Builder\CreateHtml;
+use Nouvu\Web\View\Builder\Content;
+use Nouvu\Web\View\Repository\{
+	Commit AS CommitRepository,
+	Head AS HeadRepository,
+	Title AS TitleRepository,
+};
+use Nouvu\Config\Config AS NouvuConfig;
 
 final class Viewer
 {
-	use Set, Get;
+	public HeadRepository $head;
+	public TitleRepository $title;
 	
-	// Путь до шаблонов html страниц
-	public string $directory;
-	
-	// имя родительского шаблона
-	public string | null $layout = null;
-	
-	// <head>все что тут находится</head>
-	public Input $head;
-	
-	// <title>название</title>
-	public Input $title;
-	
-	// выполнение команд от redirect, json или render
-	public Input $command;
-	
-	// html контент или json строка
-	public string $content = '';
-	
-	// 
-	protected UserInterface $model;
-	
-	public string $extension = '.php';
+	private string $directory;
+	private string | null $layout = null;
+	private string $extension = '.php';
 	
 	public function __construct ( private Request $request, private Response $response )
 	{
-		$this -> head = new Input( [ 'list' => [], 'selected' => [] ] );
+		$this -> head = new HeadRepository( [ 'list' => [], 'selected' => [] ] );
 		
-		$this -> title = new Input( [ 'list' => [], 'delimiter' => ' - ' ] );
-		
-		$this -> command = new Input( [ 'commit' => '', 'container' => [] ] );
+		$this -> title = new TitleRepository( [ 'list' => [], 'delimiter' => ' - ' ] );
 	}
 	
-	public function replaceCode( string $template, string $content ): string
+	public function setPath( NouvuConfig $NouvuConfig ): void
 	{
-		return ( string ) new ShortTag( [ $this, $this -> model ], function ( array $matches ) use ( $template ): string
-		{
-			$file = dirname ( $template ) . DIRECTORY_SEPARATOR . $matches[1];
-			
-			if ( file_exists ( $file . $this -> extension ) )
-			{
-				return $this -> getHtml( $file );
-			}
-			
-			return "<!-- Not found ({$matches[1]}) -->";
-		}, 
-		$content );
+		$path = $NouvuConfig -> get( 'app.system.directory.view' ) . $NouvuConfig -> get( 'config.theme' );
+		
+		$this -> directory = rtrim ( $path, '\\/' ) . DIRECTORY_SEPARATOR;
 	}
 	
-	protected function builderHeads(): \Iterator
+	public function setLayout( NouvuConfig $NouvuConfig ): void
 	{
-		foreach ( $this -> head -> get( 'selected' ) AS $tag )
+		$this -> layout = $NouvuConfig -> get( 'config.default_template' );
+	}
+	
+	public function setExtension( NouvuConfig $NouvuConfig ): void
+	{
+		$this -> extension = $NouvuConfig -> get( 'viewer.extension' );
+	}
+	
+	public function setHead( NouvuConfig $NouvuConfig ): void
+	{
+		$this -> head -> add( 'list', $NouvuConfig -> get( 'viewer.head' ) );
+	}
+	
+	public function setTitle( NouvuConfig $NouvuConfig ): void
+	{
+		$this -> title -> set( $NouvuConfig -> get( 'config.default_title' ) );
+	}
+	
+	public function render( CommitRepository $commit ): void
+	{
+		$commit -> get( 'layout' ) ?? $commit -> reset( 'layout', $this -> layout );
+		
+		$commit -> reset( 'commit', 'render' );
+		
+		$commit -> replace( 'content', 'container.content' );
+		
+		$commit -> replace( 'layout', 'container.layout' );
+	}
+	
+	public function redirect( CommitRepository $commit ): void
+	{
+		$commit -> reset( 'commit', 'redirect' );
+		
+		$commit -> replace( 'path', 'container' );
+	}
+	
+	public function json( CommitRepository $commit ): void
+	{
+		$this -> render( $commit );
+		
+		$commit -> reset( 'commit', 'json' );
+	}
+	
+	public function terminal( CommitRepository $commit ): void
+	{
+		$commit -> set( array_filter ( $commit -> all() ) );
+		
+		foreach ( [ 'directory', 'layout', 'head', 'title', 'extension' ] AS $name )
 		{
-			yield ( string ) new CreateHtml( $this -> head -> get( 'list.' . $tag ) );
+			$commit -> reset( $name, $this -> {$name} );
 		}
+		
+		$this -> send( $commit, new Terminal( $commit ) );
 	}
 	
-	public function render( UserInterface $model, string $content, string | null $layout = null ): array
+	private function send( CommitRepository $commit, Terminal $terminal ): void
 	{
-		$this -> model = $model;
-		
-		$layout ??= $this -> layout;
-		
-		return [ 
-			'commit' => 'render',
-			'container' => compact ( 'content', 'layout' ),
-		];
-	}
-	
-	public function redirect( string $path ): array
-	{
-		return [ 
-			'commit' => 'redirect',
-			'container' => compact ( 'path' ),
-		];
-	}
-	
-	public function json( UserInterface $model, string $content, string | null $layout = null ): array
-	{
-		$this -> model = $model;
-		
-		$this -> setLayout( $layout );
-		
-		$render = $this -> render( $content, $layout );
-		
-		$render['commit'] = 'json';
-		
-		return $render;
-	}
-	
-	private function send()
-	{
-		match ( $this -> commit )
+		match ( $commit -> getCommit() )
 		{
-			'render'	=> $this -> contentResponse(),
-			'redirect'	=> $this -> redirectResponse(), //$this => response -> headers -> set( 'Location', $url ),
-			'json'		=> $this -> jsonResponse(),
+			'render'	=> $terminal -> contentResponse( $this -> response, new Content( $commit ) ),
+			'redirect'	=> $terminal -> redirectResponse( $this -> response ),
+			'json'		=> $terminal -> jsonResponse( $this -> response, new Content( $commit ) ),
 		};
-		
-		/* $response->setStatusCode(Response::HTTP_OK); // Response::HTTP_NOT_FOUND
-		
-		$response->headers->set('Content-Type', 'text/html');
-		
-		$response->setCharset('ISO-8859-1'); */
 		
 		$this -> response -> prepare( $this -> request );
 		
 		$this -> response -> send();
-	}
-	
-	public function terminal( array $command )
-	{
-		foreach ( $command AS $name => $value )
-		{
-			$this -> {$name} = $value;
-		}
-		
-		$this -> send();
-	}
-	
-	private function contentResponse(): void
-	{
-		$this -> setContent();
-		
-		$this -> response -> headers -> set( 'Content-Type', 'text/html' );
-	}
-	
-	private function redirectResponse(): void
-	{
-		
-	}
-	
-	private function jsonResponse(): void
-	{
-		$this -> setContent( function ( string $content ): string
-		{
-			return json_encode ( [ 
-				'content' => $content, 
-				'title' => $this -> getTitle()
-			], 
-			JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		} );
-		
-		$response -> headers -> set( 'Content-Type', 'application/json' );
 	}
 }

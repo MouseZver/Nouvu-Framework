@@ -5,12 +5,14 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\Http;
 
 use Symfony\Component\Routing\Exception\ResourceNotFoundException AS SymfonyRoutingNotFound;
+use Symfony\Component\HttpFoundation\Response;
 use Nouvu\Web\Foundation\Application AS App;
 use Nouvu\Web\Foundation\Table;
-use Nouvu\Web\Foundation\Http\KernelController;
+use Nouvu\Web\Http\Controllers\KernelController;
 use Nouvu\Web\Routing\RouteCollection AS NouvuCollection;
 use Nouvu\Web\Routing\RequestContext AS NouvuContext;
 use Nouvu\Web\Routing\UrlMatcher AS NouvuMatcher;
+use Nouvu\Web\View\Repository\Commit AS CommitRepository;
 use Nouvu\Resources\Controllers;
 
 class Kernel
@@ -35,16 +37,22 @@ class Kernel
 	
 	public function getAttributes( NouvuMatcher $NouvuMatcher ): array
 	{
+		$this -> app -> response -> setStatusCode( Response :: HTTP_OK );
+		
 		return $this -> app -> router -> getAttributes( $NouvuMatcher );
 	}
 	
 	public function getAttributesNotFound( NouvuMatcher $NouvuMatcher ): array
 	{
+		$this -> app -> response -> setStatusCode( Response :: HTTP_NOT_FOUND );
+		
 		return $this -> app -> router -> getAttributesNotFound( $NouvuMatcher );
 	}
 	
 	public function getAttributesError( NouvuMatcher $NouvuMatcher ): array
 	{
+		$this -> app -> response -> setStatusCode( Response :: HTTP_INTERNAL_SERVER_ERROR );
+		
 		return $this -> app -> router -> getAttributesError( $NouvuMatcher );
 	}
 	
@@ -53,37 +61,44 @@ class Kernel
 		$this -> app -> request -> attributes -> add( $args );
 	}
 	
-	public function getCommand(): array
+	public function setCharset(): void
+	{
+		$this -> app -> response -> setCharset( $this -> app -> getCharset() );
+	}
+	
+	public function getCommit(): CommitRepository
 	{
 		$KernelController = new KernelController( $this -> app );
 		
 		return $KernelController -> getController( Controllers :: class ) -> action();
 	}
 	
-	public function terminal( array $command ): void
+	public function terminal( CommitRepository $commit ): void
 	{
-		$this -> app -> view -> terminal( $command );
+		$this -> app -> view -> terminal( $commit );
 	}
 	
-	public function handle( NouvuMatcher $NouvuMatcher ): array
+	public function handle( NouvuMatcher $NouvuMatcher ): CommitRepository
 	{
+		$this -> setCharset();
+		
 		try
 		{
 			$this -> setRequestAttributes( $this -> getAttributes( $NouvuMatcher ) );
 			
-			return $this -> getCommand();
+			return $this -> getCommit();
 		}
 		catch ( SymfonyRoutingNotFound )
 		{
 			$this -> setRequestAttributes( $this -> getAttributesNotFound( $NouvuMatcher ) );
 			
-			return $this -> getCommand();
+			return $this -> getCommit();
 		}
 		catch ( \Throwable )
 		{
 			$this -> setRequestAttributes( $this -> getAttributesError( $NouvuMatcher ) );
 			
-			return $this -> getCommand();
+			return $this -> getCommit();
 		}
 	}
 	
