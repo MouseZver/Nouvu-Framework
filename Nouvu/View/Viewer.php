@@ -7,11 +7,9 @@ namespace Nouvu\Web\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Nouvu\Web\View\Builder\Content;
-use Nouvu\Web\View\Repository\{
-	Commit AS CommitRepository,
-	Head AS HeadRepository,
-	Title AS TitleRepository,
-};
+use Nouvu\Web\View\Repository\CommitRepository;
+use Nouvu\Web\View\Repository\HeadRepository;
+use Nouvu\Web\View\Repository\TitleRepository;
 use Nouvu\Config\Config AS NouvuConfig;
 
 final class Viewer

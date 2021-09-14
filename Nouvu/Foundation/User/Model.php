@@ -14,6 +14,11 @@ class Model implements UserInterface
 		
 	}
 	
+	public function __invoke()
+	{
+		return $this -> app -> config -> get( 'viewer.include' );
+	}
+	
 	public function closure(): Closure
 	{
 		return $this -> app -> config -> get( 'viewer.include' );

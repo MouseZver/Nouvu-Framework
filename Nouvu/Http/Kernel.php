@@ -12,7 +12,7 @@ use Nouvu\Web\Http\Controllers\KernelController;
 use Nouvu\Web\Routing\RouteCollection AS NouvuCollection;
 use Nouvu\Web\Routing\RequestContext AS NouvuContext;
 use Nouvu\Web\Routing\UrlMatcher AS NouvuMatcher;
-use Nouvu\Web\View\Repository\Commit AS CommitRepository;
+use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Resources\Controllers;
 
 class Kernel
@@ -68,7 +68,7 @@ class Kernel
 	
 	public function getCommit(): CommitRepository
 	{
-		$KernelController = new KernelController( $this -> app );
+		$KernelController = new KernelController( $this -> app ); // ??????????????????????????????????????????????????????
 		
 		return $KernelController -> getController( Controllers :: class ) -> action();
 	}

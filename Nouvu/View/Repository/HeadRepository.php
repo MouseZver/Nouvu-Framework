@@ -7,7 +7,7 @@ namespace Nouvu\Web\View\Repository;
 use Nouvu\Web\Components\Config\Repository;
 use Nouvu\Web\View\Builder\CreateHtml;
 
-final class Head extends Repository
+final class HeadRepository extends Repository
 {
 	public function getSelected(): array
 	{

@@ -6,7 +6,7 @@ namespace Nouvu\Web\View\Repository;
 
 use Nouvu\Web\Components\Config\Repository;
 
-final class Title extends Repository
+final class TitleRepository extends Repository
 {
 	public function getDelimiter(): string
 	{

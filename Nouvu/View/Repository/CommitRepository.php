@@ -6,7 +6,7 @@ namespace Nouvu\Web\View\Repository;
 
 use Nouvu\Web\Components\Config\Repository;
 
-final class Commit extends Repository
+final class CommitRepository extends Repository
 {
 	public function replace( string $from, string $to ): void
 	{

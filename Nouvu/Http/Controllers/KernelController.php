@@ -25,6 +25,18 @@ class KernelController
 		return $this;
 	}
 	
+	/* public function getModel(): self
+	{
+		self :: $BaseModel ??= new ( $name . '\\' . $this -> InputController -> getControllerName() . 'Controller' )( $this -> app );
+		
+		return $this;
+	}
+	
+	public function getModel(): self
+	{
+		
+	} */
+	
 	public function action(): CommitRepository
 	{
 		$method = new \ReflectionMethod( self :: $BaseController, $this -> InputController -> getActionName() );
