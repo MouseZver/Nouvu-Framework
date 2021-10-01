@@ -27,7 +27,6 @@ Nouvu-Framework\userdata\Configs\router.php
 Nouvu-Framework\userdata\Configs\config.php
 Nouvu-Framework\userdata\Configs\app.php
 Nouvu-Framework\userdata\Resources\Controllers\MainController.php
-Nouvu-Framework\userdata\Resources\Models\MainModel.php
 Nouvu-Framework\userdata\Resources\System\RecreateRouting.php
 Nouvu-Framework\userdata\Resources\View\default\welcome.php
 Nouvu-Framework\userdata\Resources\View\default\index.php
