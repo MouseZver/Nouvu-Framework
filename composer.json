@@ -18,9 +18,5 @@
 		"nouvu/container": "^1.1",
 		"symfony/http-foundation": "^5.3",
         "symfony/routing": "^5.3"
-	},
-	"autoload": {
-        "psr-4": { "Nouvu\\Web\\": "Nouvu" }
-    },
-	"minimum-stability": "alpha"
+	}
 }
