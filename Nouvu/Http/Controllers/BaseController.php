@@ -5,17 +5,13 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\Http\Controllers;
 
 use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\Foundation\User\UserInterface;
 use Nouvu\Web\View\Repository\CommitRepository;
 
 class BaseController
 {
-	protected UserInterface $model;
-	
 	public function __construct ( protected App $app )
 	{
-		$this -> model = $app -> make( str_replace ( \Controller :: class, \Model :: class, static :: class ), [ $app ] );
-		//$this -> model = $app -> make( \Model :: class, [ $app ] );
+		
 	}
 	
 	public function isAjax(): bool
@@ -42,8 +38,6 @@ class BaseController
 	
 	private function getCommitInstance( array $data ): CommitRepository
 	{
-		$data['model'] = $this -> model;
-		
 		return new CommitRepository( $data );
 	}
 	

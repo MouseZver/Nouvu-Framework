@@ -42,8 +42,6 @@ class Application
 	{
 		foreach ( $this -> config -> get( 'app.ini_set' ) AS $option => $value )
 		{
-			//printf ( '%s -> %s' . PHP_EOL, $option, ( string ) $value( $this ) );
-			
 			ini_set ( $option, ( string ) $value( $this ) );
 		}
 	}

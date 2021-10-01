@@ -7,7 +7,6 @@ namespace Nouvu\Web\View;
 use Symfony\Component\HttpFoundation\Response;
 use Nouvu\Web\View\Builder\Content;
 use Nouvu\Web\View\Repository\CommitRepository;
-//use Nouvu\Web\Foundation\User\UserInterface;
 
 class Terminal
 {

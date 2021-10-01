@@ -14,11 +14,8 @@
     ],
 	"require": {
 		"php": ">=8.0",
-		"nouvu/lerma": "~v7.0.0",
 		"nouvu/config": "^v4.0",
-		"nouvu/query-storing": "^2.0",
 		"nouvu/container": "^1.1",
-		"nouvu/logger": "^2.0",
 		"symfony/http-foundation": "^5.3",
         "symfony/routing": "^5.3"
 	},

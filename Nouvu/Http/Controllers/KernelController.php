@@ -5,7 +5,7 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\Http\Controllers;
 
 use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\View\Repository\Commit AS CommitRepository;
+use Nouvu\Web\View\Repository\CommitRepository;
 
 class KernelController
 {
@@ -24,18 +24,6 @@ class KernelController
 		
 		return $this;
 	}
-	
-	/* public function getModel(): self
-	{
-		self :: $BaseModel ??= new ( $name . '\\' . $this -> InputController -> getControllerName() . 'Controller' )( $this -> app );
-		
-		return $this;
-	}
-	
-	public function getModel(): self
-	{
-		
-	} */
 	
 	public function action(): CommitRepository
 	{

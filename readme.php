@@ -1,126 +1,37 @@
-<?php
-
-header () ????
-
-session_start () ???
-
-ob_start () ???
-
-    /**
-     * Create a new request instance from the given Laravel request.
-     *
-     * @param  \Illuminate\Http\Request  $from
-     * @param  \Illuminate\Http\Request|null  $to
-     * @return static
-     */
-    public static function createFrom(self $from, $to = null)
-    {
-        $request = $to ?: new static;
-
-        $files = $from->files->all();
-
-        $files = is_array($files) ? array_filter($files) : $files;
-
-        $request->initialize(
-            $from->query->all(),
-            $from->request->all(),
-            $from->attributes->all(),
-            $from->cookies->all(),
-            $files,
-            $from->server->all(),
-            $from->getContent()
-        );
-
-        $request->headers->replace($from->headers->all());
-
-        $request->setJson($from->json());
-
-        if ($session = $from->getSession()) {
-            $request->setLaravelSession($session);
-        }
-
-        $request->setUserResolver($from->getUserResolver());
-
-        $request->setRouteResolver($from->getRouteResolver());
-
-        return $request;
-    }
-	
-	/**
-     * Create an Illuminate request from a Symfony instance.
-     *
-     * @param  \Symfony\Component\HttpFoundation\Request  $request
-     * @return static
-     */
-    public static function createFromBase(SymfonyRequest $request)
-    {
-        $newRequest = (new static)->duplicate(
-            $request->query->all(), $request->request->all(), $request->attributes->all(),
-            $request->cookies->all(), $request->files->all(), $request->server->all()
-        );
-
-        $newRequest->headers->replace($request->headers->all());
-
-        $newRequest->content = $request->content;
-
-        $newRequest->request = $newRequest->getInputSource();
-
-        return $newRequest;
-    }
-	
-$kernel = $app->make(Kernel::class);
-
-$response = tap($kernel->handle(
-    $request = Request::capture()
-))->send();
-
-$kernel->terminate($request, $response);
-
-
-
-public function handle($request)
-{
-	try {
-		$request->enableHttpMethodParameterOverride();
-
-		$response = $this->sendRequestThroughRouter($request);
-	} catch (Exception $e) {
-		$this->reportException($e);
-
-		$response = $this->renderException($request, $e);
-	} catch (Throwable $e) {
-		$this->reportException($e = new FatalThrowableError($e));
-
-		$response = $this->renderException($request, $e);
-	}
-
-	event(new Events\RequestHandled($request, $response));
-
-	return $response;
-}
-
-public function terminate($request, $response)
-{
-	$this->terminateMiddleware($request, $response);
-
-	$this->app->terminate();
-}
-
-
-
-
-
-$KernelController = new KernelController( $this -> app );
-		
-$commit = $KernelController -> getController( Controllers :: class ) -> action();
-{
-	return CommitRepository :: class <-- BaseController :: class
-		- render
-		- redirect
-		- json
-}
-
-$this -> app -> view -> terminal( $commit );
-{
-	
-}
+Nouvu-Framework\service.php
+Nouvu-Framework\readme.php
+Nouvu-Framework\Nouvu\Components\Config\Repository.php
+Nouvu-Framework\Nouvu\Foundation\Application.php
+Nouvu-Framework\Nouvu\Foundation\Table\ContextAble.php
+Nouvu-Framework\Nouvu\Foundation\Table\CollectAble.php
+Nouvu-Framework\Nouvu\Foundation\Table\App.php
+Nouvu-Framework\Nouvu\Http\Kernel.php
+Nouvu-Framework\Nouvu\Http\Controllers\KernelController.php
+Nouvu-Framework\Nouvu\Http\Controllers\InputController.php
+Nouvu-Framework\Nouvu\Http\Controllers\BaseController.php
+Nouvu-Framework\Nouvu\Routing\UrlMatcher.php
+Nouvu-Framework\Nouvu\Routing\Router.php
+Nouvu-Framework\Nouvu\Routing\RouteCollection.php
+Nouvu-Framework\Nouvu\Routing\RequestContext.php
+Nouvu-Framework\Nouvu\View\Viewer.php
+Nouvu-Framework\Nouvu\View\Terminal.php
+Nouvu-Framework\Nouvu\View\Builder\ShortTag.php
+Nouvu-Framework\Nouvu\View\Builder\CreateHtml.php
+Nouvu-Framework\Nouvu\View\Builder\Content.php
+Nouvu-Framework\Nouvu\View\Repository\TitleRepository.php
+Nouvu-Framework\Nouvu\View\Repository\HeadRepository.php
+Nouvu-Framework\Nouvu\View\Repository\CommitRepository.php
+Nouvu-Framework\userdata\tools.php
+Nouvu-Framework\userdata\Configs\viewer.php
+Nouvu-Framework\userdata\Configs\router.php
+Nouvu-Framework\userdata\Configs\config.php
+Nouvu-Framework\userdata\Configs\app.php
+Nouvu-Framework\userdata\Resources\Controllers\MainController.php
+Nouvu-Framework\userdata\Resources\Models\MainModel.php
+Nouvu-Framework\userdata\Resources\System\RecreateRouting.php
+Nouvu-Framework\userdata\Resources\View\default\welcome.php
+Nouvu-Framework\userdata\Resources\View\default\index.php
+Nouvu-Framework\userdata\Resources\View\default\error.500.php
+Nouvu-Framework\userdata\Resources\View\default\error.404.php
+Nouvu-Framework\userdata\Resources\View\default\error-template.php
+Nouvu-Framework\userdata\Resources\View\default\default-template.php

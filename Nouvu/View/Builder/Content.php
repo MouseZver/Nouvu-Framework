@@ -5,7 +5,7 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\View\Builder;
 
 use Symfony\Component\HttpFoundation\Response;
-use Nouvu\Web\View\Repository\Commit AS CommitRepository;
+use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Web\View\Builder\ShortTag;
 
 class Content

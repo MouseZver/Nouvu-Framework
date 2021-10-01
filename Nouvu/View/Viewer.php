@@ -10,7 +10,7 @@ use Nouvu\Web\View\Builder\Content;
 use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Web\View\Repository\HeadRepository;
 use Nouvu\Web\View\Repository\TitleRepository;
-use Nouvu\Config\Config AS NouvuConfig;
+use Nouvu\Web\Components\Config\Repository;
 
 final class Viewer
 {
@@ -28,38 +28,38 @@ final class Viewer
 		$this -> title = new TitleRepository( [ 'list' => [], 'delimiter' => ' - ' ] );
 	}
 	
-	public function setPath( NouvuConfig $NouvuConfig ): void
+	public function setPath( Repository $repository ): void
 	{
-		$path = $NouvuConfig -> get( 'app.system.directory.view' ) . $NouvuConfig -> get( 'config.theme' );
+		$path = $repository -> get( 'app.system.directory.view' ) . $repository -> get( 'config.theme' );
 		
 		$this -> directory = rtrim ( $path, '\\/' ) . DIRECTORY_SEPARATOR;
 	}
 	
-	public function setLayout( NouvuConfig $NouvuConfig ): void
+	public function setLayout( Repository $repository ): void
 	{
-		$this -> layout = $NouvuConfig -> get( 'config.default_template' );
+		$this -> layout = $repository -> get( 'config.default_template' );
 	}
 	
-	public function setExtension( NouvuConfig $NouvuConfig ): void
+	public function setExtension( Repository $repository ): void
 	{
-		$this -> extension = $NouvuConfig -> get( 'viewer.extension' );
+		$this -> extension = $repository -> get( 'viewer.extension' );
 	}
 	
-	public function setHead( NouvuConfig $NouvuConfig ): void
+	public function setHead( Repository $repository ): void
 	{
-		$this -> head -> add( 'list', $NouvuConfig -> get( 'viewer.head' ) );
+		$this -> head -> add( 'list', $repository -> get( 'viewer.head' ) );
 	}
 	
-	public function setTitle( NouvuConfig $NouvuConfig ): void
+	public function setTitle( Repository $repository ): void
 	{
-		$this -> title -> set( $NouvuConfig -> get( 'config.default_title' ) );
+		$this -> title -> set( $repository -> get( 'config.default_title' ) );
 	}
 	
 	public function render( CommitRepository $commit ): void
 	{
-		$commit -> get( 'layout' ) ?? $commit -> reset( 'layout', $this -> layout );
+		$commit -> get( 'layout' ) ?? $commit -> reset ( 'layout', $this -> layout );
 		
-		$commit -> reset( 'commit', 'render' );
+		$commit -> reset ( 'commit', 'render' );
 		
 		$commit -> replace( 'content', 'container.content' );
 		
@@ -68,7 +68,7 @@ final class Viewer
 	
 	public function redirect( CommitRepository $commit ): void
 	{
-		$commit -> reset( 'commit', 'redirect' );
+		$commit -> reset ( 'commit', 'redirect' );
 		
 		$commit -> replace( 'path', 'container' );
 	}
@@ -77,7 +77,7 @@ final class Viewer
 	{
 		$this -> render( $commit );
 		
-		$commit -> reset( 'commit', 'json' );
+		$commit -> reset ( 'commit', 'json' );
 	}
 	
 	public function terminal( CommitRepository $commit ): void
@@ -86,7 +86,7 @@ final class Viewer
 		
 		foreach ( [ 'directory', 'layout', 'head', 'title', 'extension' ] AS $name )
 		{
-			$commit -> reset( $name, $this -> {$name} );
+			$commit -> reset ( $name, $this -> {$name} );
 		}
 		
 		$this -> send( $commit, new Terminal( $commit ) );
