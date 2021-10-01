@@ -1,3 +1,5 @@
+> composer create-project nouvu/framework Nouvu-Test "v1.0.1-alpha"
+
 C:\GitHub\Nouvu-Framework\service.php
 C:\GitHub\Nouvu-Framework\readme.php
 C:\GitHub\Nouvu-Framework\Nouvu\Components\Config\Repository.php
