@@ -74,7 +74,9 @@ class Content
 	{
 		ob_start ();
 		
-		$this -> commit -> get( 'model' ) -> closure()( $name );
+		$closure = $this -> commit -> get( 'model' )();
+		
+		$closure( $name );
 		
 		return $this -> replaceCode( $name, ob_get_clean () );
 	}
