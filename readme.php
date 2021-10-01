@@ -1,7 +1,7 @@
-
-> composer create-project nouvu/framework Nouvu-Test "v1.0.1-alpha"
+composer create-project nouvu/framework Nouvu-Test "v1.0.1-alpha"
 
 Nouvu-Framework\service.php
+Nouvu-Framework\readme.php
 Nouvu-Framework\Nouvu\Components\Config\Repository.php
 Nouvu-Framework\Nouvu\Foundation\Application.php
 Nouvu-Framework\Nouvu\Foundation\Table\ContextAble.php
