@@ -3,15 +3,6 @@
     "description": "Nouvu Framework",
     "type": "project",
     "license": "MIT",
-	"homepage": "",
-	"keywords": [ "PHP 8.0", "Nouvu", "Framework" ],
-    "authors": [
-        {
-            "name": "MouseZver",
-            "email": "mouse-zver@xaker.ru",
-			"role": "Developer"
-        }
-    ],
 	"require": {
 		"php": ">=8.0",
 		"nouvu/config": "^v4.0",
