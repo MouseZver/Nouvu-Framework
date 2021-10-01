@@ -2,8 +2,6 @@
     "name": "nouvu/framework",
     "description": "Nouvu Framework",
     "type": "project",
-    "license": "MIT",
-	"homepage": "",
 	"keywords": [ "PHP 8.0", "Nouvu", "Framework" ],
     "authors": [
         {
@@ -12,11 +10,13 @@
 			"role": "Developer"
         }
     ],
-	"require": {
+    "require": {
 		"php": ">=8.0",
 		"nouvu/config": "^v4.0",
 		"nouvu/container": "^1.1",
 		"symfony/http-foundation": "^5.3",
         "symfony/routing": "^5.3"
-	}
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
 }
