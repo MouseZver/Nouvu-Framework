@@ -19,7 +19,7 @@ class Content
 	
 	protected function replaceCode( string $template, string $content ): string
 	{
-		return ( string ) new ShortTag( [ $this, $this -> commit -> get( 'model' ) ], function ( array $matches ) use ( $template ): string
+		return new ShortTag( [ $this, $this -> commit -> get( 'model' ) ], function ( array $matches ) use ( $template ): string
 		{
 			$file = dirname ( $template ) . DIRECTORY_SEPARATOR . $matches[1];
 			
