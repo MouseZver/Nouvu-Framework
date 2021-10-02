@@ -4,16 +4,16 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Routing;
 
-use Symfony\Component\Routing\RequestContext AS Context;
+use Symfony\Component\Routing\RequestContext AS SymfonyContext;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestContext
 {
-	private Context $context;
+	private SymfonyContext $context;
 	
 	public function __construct ()
 	{
-		$this -> context = new Context;
+		$this -> context = new SymfonyContext;
 	}
 	
 	public function copyRequest( Request $request )
@@ -21,7 +21,7 @@ class RequestContext
 		$this -> context -> fromRequest( $request );
 	}
 	
-	public function get(): Context
+	public function get(): SymfonyContext
 	{
 		return $this -> context;
 	}

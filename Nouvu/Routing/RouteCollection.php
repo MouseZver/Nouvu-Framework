@@ -4,16 +4,16 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Routing;
 
-use \Symfony\Component\Routing\RouteCollection AS Collection;
-use \Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection AS SymfonyCollection;
+use Symfony\Component\Routing\Route;
 
 class RouteCollection
 {
-	private Collection $collection;
+	private SymfonyCollection $collection;
 	
 	public function __construct ()
 	{
-		$this -> collection = new Collection;
+		$this -> collection = new SymfonyCollection;
 	}
 	
 	/*
@@ -24,7 +24,7 @@ class RouteCollection
 		$this -> collection -> add( ( string ) $name, new Route( ...array_values ( $route ) ) );
 	}
 	
-	public function get(): Collection
+	public function get(): SymfonyCollection
 	{
 		return $this -> collection;
 	}
