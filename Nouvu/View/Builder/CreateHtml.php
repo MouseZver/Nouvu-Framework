@@ -6,8 +6,9 @@ namespace Nouvu\Web\View\Builder;
 
 use Closure;
 use Iterator;
+use Stringable;
 
-class CreateHtml
+class CreateHtml implements Stringable
 {
 	public array $noEnd = [
 		'meta', 'link', 'img', 'input', 
@@ -33,7 +34,7 @@ class CreateHtml
 		
 		if ( isset ( $data[0] ) )
 		{
-			$closure = function ( array $rows ): Iterator
+			/* $closure = function ( array $rows ): Iterator
 			{
 				foreach ( $rows AS $row )
 				{
@@ -41,7 +42,11 @@ class CreateHtml
 				}
 			};
 			
-			return implode ( ' ', iterator_to_array ( $closure( $data ) ) );
+			return implode ( ' ', iterator_to_array ( $closure( $data ) ) ); */
+			
+			$array = array_map ( fn( array | string $row ): string => $this -> compile( $row ), $data );
+			
+			return implode ( ' ', $array );
 		}
 		
 		$data = ( object ) $data;

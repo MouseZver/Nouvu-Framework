@@ -6,15 +6,14 @@ namespace Nouvu\Web\View\Builder;
 
 use Closure;
 use Iterator;
-use Stringable;
 
-class ShortTag implements Stringable
+class ShortTag
 {
 	protected string $regex = '#{<{([\w\-\/]+)(=([\w\|_-]+)|)}>}#';
 	
 	public function __construct ( 
 		protected array $comparison, 
-		protected Closure | null $call = null, 
+		protected \Closure | null $call = null, 
 		protected string $content = ''
 	)
 	{
