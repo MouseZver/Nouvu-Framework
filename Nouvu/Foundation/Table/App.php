@@ -4,6 +4,8 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Foundation\Table;
 
+use Psr\Container\ContainerInterface;
+
 trait App
 {
 	public function getLocale(): string
@@ -18,12 +20,10 @@ trait App
 	
 	public function make( string $class, array $params = [] ): mixed
 	{
-		if ( is_null ( $this -> {$class} ) )
-		{
-			$this -> {$class} = fn() => new $class( ...$params );
-		}
+		/* return $this -> getContainer( \Container :: class ) 
+			-> make( $class, fn( ContainerInterface $ContainerInterface ): mixed => new $class( ...$params ) ); */
 		
-		return $this -> {$class};
+		return $this -> container -> make( $class, fn( ContainerInterface $ContainerInterface ): mixed => new $class( ...$params ) );
 	}
 	
 	public function path( string $name ): string | null

@@ -1,11 +1,21 @@
 <?php
 
+use Psr\Container\ContainerInterface;
+
 return
 [
 	/*
 		- 
 	*/
-	\Config :: class => static function ( \Nouvu\Container $container ): \Nouvu\Web\Components\Config\Repository
+	\Container :: class => static function ( ContainerInterface $container ): ContainerInterface
+	{
+		return $container;
+	},
+	
+	/*
+		- 
+	*/
+	\Config :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Components\Config\Repository
 	{
 		$config = [];
 		
@@ -31,7 +41,7 @@ return
 	/*
 		- 
 	*/
-	\Kernel :: class => static function ( \Nouvu\Container $container ): \Nouvu\Web\Http\Kernel
+	\Kernel :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Http\Kernel
 	{
 		return new \Nouvu\Web\Http\Kernel( $container -> get( \App :: class ) );
 	},
@@ -39,7 +49,7 @@ return
 	/*
 		- 
 	*/
-	\Request :: class => static function ( \Nouvu\Container $container ): \Symfony\Component\HttpFoundation\Request
+	\Request :: class => static function ( ContainerInterface $container ): \Symfony\Component\HttpFoundation\Request
 	{
 		return \Symfony\Component\HttpFoundation\Request :: createFromGlobals();
 	},
@@ -47,7 +57,7 @@ return
 	/*
 		- 
 	*/
-	\Response :: class => static function ( \Nouvu\Container $container ): \Symfony\Component\HttpFoundation\Response
+	\Response :: class => static function ( ContainerInterface $container ): \Symfony\Component\HttpFoundation\Response
 	{
 		return new \Symfony\Component\HttpFoundation\Response;
 	},
@@ -55,7 +65,7 @@ return
 	/*
 		- 
 	*/
-	\Router :: class => static function ( \Nouvu\Container $container ): \Nouvu\Web\Routing\Router
+	\Router :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Routing\Router
 	{
 		return new \Nouvu\Web\Routing\Router( $container -> get( \App :: class ) );
 	},
@@ -63,7 +73,7 @@ return
 	/*
 		-
 	*/
-	\Session :: class => static function ( \Nouvu\Container $container ): \Symfony\Component\HttpFoundation\Session\Session
+	\Session :: class => static function ( ContainerInterface $container ): \Symfony\Component\HttpFoundation\Session\Session
 	{
 		$session = new \Symfony\Component\HttpFoundation\Session\Session;
 		
@@ -77,7 +87,7 @@ return
 	/*
 		- 
 	*/
-	\View :: class => static function ( \Nouvu\Container $container ): \Nouvu\Web\View\Viewer
+	\View :: class => static function ( ContainerInterface $container ): \Nouvu\Web\View\Viewer
 	{
 		$app = $container -> get( \App :: class );
 		

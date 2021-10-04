@@ -4,15 +4,15 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Foundation;
 
-use Nouvu\Container;
+use Psr\Container\ContainerInterface;
 
 class Application
 {
 	use Table\App;
 	
-	public function __construct ( private Container $container, array $tools )
+	public function __construct ( private ContainerInterface $ContainerInterface, array $tools )
 	{
-		foreach ( $tools + [ \App :: class => ( fn( Container $container ): self => $this ) ] AS $name => $packaging )
+		foreach ( $tools + [ \App :: class => ( fn( ContainerInterface $ContainerInterface ): self => $this ) ] AS $name => $packaging )
 		{
 			$this -> setContainer( $name, $packaging );
 		}
@@ -20,12 +20,12 @@ class Application
 	
 	protected function setContainer( string $name, callable $packaging ): void
 	{
-		$this -> container -> set( ucfirst ( strtolower ( $name ) ), $packaging );
+		$this -> ContainerInterface -> set( ucfirst ( strtolower ( $name ) ), $packaging );
 	}
 	
 	protected function getContainer( string $name ): mixed
 	{
-		return $this -> container -> get( str_replace ( '.', '\\', $name ) );
+		return $this -> ContainerInterface -> get( str_replace ( '.', '\\', $name ) );
 	}
 	
 	public function __set( string $name, callable $value ): void
