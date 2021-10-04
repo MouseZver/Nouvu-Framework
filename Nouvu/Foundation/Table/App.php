@@ -23,7 +23,7 @@ trait App
 		/* return $this -> getContainer( \Container :: class ) 
 			-> make( $class, fn( ContainerInterface $ContainerInterface ): mixed => new $class( ...$params ) ); */
 		
-		return $this -> container -> make( $class, fn( ContainerInterface $ContainerInterface ): mixed => new $class( ...$params ) );
+		return $this -> container -> make( $class, $params );
 	}
 	
 	public function path( string $name ): string | null
