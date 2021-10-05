@@ -17,10 +17,10 @@
 		"nouvu/config": "^v4.0",
 		"nouvu/container": "^2.0",
 		"symfony/http-foundation": "^5.3",
-        "symfony/routing": "^5.3"
+        "symfony/routing": "^5.3",
         "symfony/security-core": "^6.0",
         "symfony/security-http": "^6.0",
         "symfony/security-csrf": "^6.0",
-        "symfony/security-guard": "^6.0",
+        "symfony/security-guard": "^6.0"
 	}
 }
