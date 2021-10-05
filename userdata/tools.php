@@ -19,7 +19,7 @@ return
 	{
 		$config = [];
 		
-		$app = $container -> get( \App :: class );
+		//$app = $container -> get( \App :: class );
 		
 		foreach ( glob ( dirname ( __FILE__ ) . '/Configs/*.php' ) AS $file )
 		{
@@ -102,4 +102,42 @@ return
 		
 		return $viewer;
 	},
+	
+	/*
+		- 
+	*/
+	\Security :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Security
+	{
+		return new \Symfony\Component\Security\Core\Security( $container );
+	},
+	
+	/*
+		- Symfony > security > isGranted
+	*/
+	'security.authorization_checker' => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authorization
+	{
+		return new \Symfony\Component\Security\Core\Authorization\AuthorizationChecker(
+			$container -> make( \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage :: class ), 
+			
+		);
+	},
+	
+	/*
+		- Symfony > security > getToken
+	*/
+	'security.token_storage' => static function ( ContainerInterface $container ): ContainerInterface
+	{
+		//return $container -> get( 0000000000 );
+	},
+	
+	// make
+	/* \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
+	{
+		return \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+	}, */
+	
+	\Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface
+	{
+		return \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
+	}
 ];

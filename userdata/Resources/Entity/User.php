@@ -34,12 +34,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		return $this -> fullName;
 	}
 	
-	public function getUserIdentifier(): string
+	public function getUserIdentifier(): string | null
 	{
 		return $this -> username;
 	}
 	
-	public function getUsername(): string
+	public function getUsername(): string | null
 	{
 		return $this -> getUserIdentifier();
 	}
@@ -75,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		
 		if ( empty ( $roles ) )
 		{
-			$roles[] = 'ROLE_DEFAULT';
+			$roles[] = 'ROLE_USER';
 		}
 
 		return array_unique ( $roles );
