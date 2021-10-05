@@ -14,6 +14,7 @@
     ],
 	"require": {
 		"php": "^8.0",
+		"psr/container": "^1.1",
 		"nouvu/config": "^v4.0",
 		"nouvu/container": "^2.0",
 		"symfony/http-foundation": "^5.3",
