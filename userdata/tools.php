@@ -5,6 +5,14 @@ use Psr\Container\ContainerInterface;
 return
 [
 	/*
+		- example tool
+	*/
+	/* name => static function ( ContainerInterface $container ): returnType
+	{
+		return value;
+	}, */
+	
+	/*
 		- 
 	*/
 	\Container :: class => static function ( ContainerInterface $container ): ContainerInterface
@@ -136,8 +144,8 @@ return
 		return \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 	}, */
 	
-	\Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface
+	/* \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface
 	{
 		return \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
-	}
+	} */
 ];

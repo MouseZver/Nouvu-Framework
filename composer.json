@@ -4,7 +4,7 @@
     "type": "project",
     "license": "MIT",
 	"homepage": "https://github.com/MouseZver/Nouvu-Framework",
-	"keywords": [ "PHP 8.0", "Nouvu", "Framework" ],
+	"keywords": [ "PHP8", "Nouvu", "Framework" ],
     "authors": [
         {
             "name": "MouseZver",
@@ -19,6 +19,12 @@
 		"nouvu/container": "^2.0",
 		"symfony/http-foundation": "^5.3",
         "symfony/routing": "^5.3",
-		"symfony/security": ">=4.4"
-	}
+		"symfony/security": "^4.4"
+	},
+    "autoload": {
+         "psr-4": {
+             "Nouvu\\Web\\": "src/Nouvu"
+         },
+         "classmap": [ "src/Nouvu" ]
+    }
 }
