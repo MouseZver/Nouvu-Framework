@@ -27,7 +27,8 @@ return
 	{
 		$config = [];
 		
-		//$app = $container -> get( \App :: class );
+		// use to each config
+		$app = $container -> get( \App :: class );
 		
 		foreach ( glob ( dirname ( __FILE__ ) . '/Configs/*.php' ) AS $file )
 		{
