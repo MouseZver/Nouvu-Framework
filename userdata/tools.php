@@ -23,7 +23,7 @@ return
 	/*
 		- 
 	*/
-	\Config :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Components\Config\Repository
+	\Repository :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Components\Config\Repository
 	{
 		$config = [];
 		

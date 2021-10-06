@@ -2,6 +2,21 @@
 
 return [
 	/*
+		- Данные для подключения к MySQL БД
+		- dsn синтаксис используется инструментом https://github.com/MouseZver/Lerma
+		- Настройка для PDO или для других инструментов, находится в файле userdata/tools.php
+	*/
+	'database' => [
+		'dsn'		=> 'mysql:dbname=%s;username=%s;password=%s;host=%s;charset=%s',
+		'dbname'	=> '00000000000',
+		'username'	=> '00000000000',
+		'password'	=> '00000000000',
+		'host'		=> '00000000000',
+		'charset'	=> 'utf8',
+		'port'		=> 3306,
+	],
+	
+	/*
 		- Настройка Часового пояса. Список поддерживаемых временных зон:
 		- https://www.php.net/manual/ru/timezones.php
 		- Для использования default зоны, следует установить значение false
