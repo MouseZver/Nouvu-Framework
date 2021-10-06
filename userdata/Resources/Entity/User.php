@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Foundation\Entity;
+namespace Nouvu\Resources\Entity;
 
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,15 +11,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-	private int | null $id; // ???????????? __unserialize
-	private string | null $fullName;
-	private string | null $username;
-	private string | null $email;
-	private string | null $password;
+	private ?int $id = null; // ???????????? __unserialize
+	//private ?string $fullName;
+	private ?string $username;
+	private ?string $email;
+	private ?string $password;
 	private array $roles = [];
 	
 	// ????????????????????? как id значение присвоится // __unserialize
-	public function getId(): int | null
+	public function getId(): ?int
 	{
 		return $this -> id;
 	}
@@ -29,17 +29,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		$this -> fullName = $fullName;
 	}
 	
-	public function getFullName(): string | null
+	public function getFullName(): ?string
 	{
 		return $this -> fullName;
 	}
 	
-	public function getUserIdentifier(): string | null
+	public function getUserIdentifier(): ?string
 	{
 		return $this -> username;
 	}
 	
-	public function getUsername(): string | null
+	public function getUsername(): ?string
 	{
 		return $this -> getUserIdentifier();
 	}
@@ -49,7 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		$this -> username = $username;
 	}
 	
-	public function getEmail(): string | null
+	public function getEmail(): ?string
 	{
 		return $this -> email;
 	}
@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		$this -> email = $email;
 	}
 	
-	public function getPassword(): string | null
+	public function getPassword(): ?string
 	{
 		return $this -> password;
 	}
@@ -86,7 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		$this -> roles = $roles;
 	}
 	
-	public function getSalt(): string | null
+	public function getSalt(): ?string
 	{
 		// We're using bcrypt in security.yaml to encode the password, so
 		// the salt value is built-in and and you don't have to generate one
@@ -101,7 +101,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		// $this->plainPassword = null;
 	}
 
-	public function __serialize(): array
+	/* public function __serialize(): array
 	{
 		// add $this->salt too if you don't use Bcrypt or Argon2i
 		return [ $this -> id, $this -> username, $this -> password ];
@@ -111,5 +111,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	{
 		// add $this->salt too if you don't use Bcrypt or Argon2i
 		[ $this -> id, $this -> username, $this -> password ] = $data;
-	}
+	} */
 }
