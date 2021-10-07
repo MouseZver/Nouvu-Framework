@@ -34,5 +34,13 @@ return [
 		],
 		'insert' => [],
 		'update' => [],
+		'delete' => [],
+		'file' => [],
+		'create' => [],
+		'alter' => [],
+		'index' => [],
+		'drop' => [],
+		'CreateTemporaryTables' => [],
+		'LockTables' => [],
 	],
 ];

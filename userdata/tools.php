@@ -74,6 +74,23 @@ return
 	/*
 		- 
 	*/
+	\Database :: class => static function ( \Nouvu\Container $container ): \Nouvu\Web\Component\Database\DatabaseManager
+	{
+		$database = new \Nouvu\Web\Database\DatabaseManager( $container -> get( \App :: class ) );
+		
+		$zone = $container -> get( \Repository :: class ) -> get( 'timezone.database' );
+		
+		if ( ! empty ( $zone ) )
+		{
+			$database -> query( [ 'SET time_zone = "%s"', $zone ] );
+		}
+		
+		return $database;
+	},
+	
+	/*
+		- 
+	*/
 	\Router :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Routing\Router
 	{
 		return new \Nouvu\Web\Routing\Router( $container -> get( \App :: class ) );
