@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Components\Database;
+namespace Nouvu\Web\Component\Database;
 
 interface DatabaseRequestInterface
 {

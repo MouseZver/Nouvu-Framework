@@ -23,7 +23,7 @@ return
 	/*
 		- 
 	*/
-	\Repository :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Components\Config\Repository
+	\Repository :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Component\Config\Repository
 	{
 		$config = [];
 		
@@ -44,7 +44,7 @@ return
 		
 		$config['app']['system']['directory']['view'] = $userdata . 'Resources/View/';
 		
-		return new \Nouvu\Web\Components\Config\Repository( $config, '.' );
+		return new \Nouvu\Web\Component\Config\Repository( $config, '.' );
 	},
 	
 	/*
@@ -76,7 +76,7 @@ return
 	*/
 	\Database :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Component\Database\DatabaseManager
 	{
-		$database = new \Nouvu\Web\Database\DatabaseManager( $container -> get( \App :: class ) );
+		$database = new \Nouvu\Web\Component\Database\DatabaseManager( $container -> get( \App :: class ) );
 		
 		$zone = $container -> get( \Repository :: class ) -> get( 'timezone.database' );
 		

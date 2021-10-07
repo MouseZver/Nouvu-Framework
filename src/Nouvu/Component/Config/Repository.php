@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Components\Config;
+namespace Nouvu\Web\Component\Config;
 
 use Nouvu\Config\Config;
 

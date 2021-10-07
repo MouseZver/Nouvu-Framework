@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Database;
+namespace Nouvu\Web\Component\Database;
 
 use Nouvu\Web\Foundation\Application AS App
 
