@@ -4,7 +4,7 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Http\Controllers;
 
-use Nouvu\Web\Components\Config\Repository;
+use Nouvu\Web\Component\Config\Repository;
 
 class InputController extends Repository
 {

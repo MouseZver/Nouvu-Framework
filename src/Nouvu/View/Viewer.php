@@ -10,7 +10,7 @@ use Nouvu\Web\View\Builder\Content;
 use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Web\View\Repository\HeadRepository;
 use Nouvu\Web\View\Repository\TitleRepository;
-use Nouvu\Web\Components\Config\Repository;
+use Nouvu\Web\Component\Config\Repository;
 
 final class Viewer
 {
