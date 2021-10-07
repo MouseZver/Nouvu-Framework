@@ -5,7 +5,7 @@ declare ( strict_types = 1 );
 namespace Nouvu\Resources\System;
 
 use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\Database\DatabaseToolsInterface;
+use Nouvu\Web\Component\Database\DatabaseToolsInterface;
 use Nouvu\Database\Lerma;
 use Nouvu\Database\LermaStatement;
 
