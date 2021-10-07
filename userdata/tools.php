@@ -74,7 +74,7 @@ return
 	/*
 		- 
 	*/
-	\Database :: class => static function ( \Nouvu\Container $container ): \Nouvu\Web\Component\Database\DatabaseManager
+	\Database :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Component\Database\DatabaseManager
 	{
 		$database = new \Nouvu\Web\Database\DatabaseManager( $container -> get( \App :: class ) );
 		
