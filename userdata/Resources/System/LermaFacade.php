@@ -7,7 +7,7 @@ namespace Nouvu\Resources\System;
 use Nouvu\Web\Foundation\Application AS App;
 use Nouvu\Web\Database\DatabaseToolsInterface;
 use Nouvu\Database\Lerma;
-use Nouvu\Database\LermaStatement
+use Nouvu\Database\LermaStatement;
 
 final class LermaFacade implements DatabaseToolsInterface
 {
