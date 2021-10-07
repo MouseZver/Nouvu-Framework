@@ -7,7 +7,7 @@ return [
 	
 	'closure' => static function ( App $app ): array
 	{
-		$file = $app -> path( 'userdata' ) . $app -> config -> get( 'router.file' );
+		$file = $app -> path( 'userdata' ) . $app -> repository -> get( 'router.file' );
 		
 		if ( file_exists ( $file ) )
 		{

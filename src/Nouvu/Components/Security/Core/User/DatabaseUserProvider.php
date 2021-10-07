@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Components\Security\Core\Authentication\Provider;
+namespace Nouvu\Web\Components\Security\Core\User;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,14 +18,19 @@ class DatabaseUserProvider implements UserProviderInterface
 		
 	}
 	
-	public function loadUserByUsername( string $username )
+	public function loadUserByUsername( string $username ): User
 	{
 		return $this -> getUser( $username );
 	}
 	
-	private function getUser( string $username ): User
+	/* public function loadUserByIdentifier( ... ): User
 	{
-		$DatabaseRequestInterface = $this -> app -> repository -> get( 'query.database.select.users_username|email' )( name: $username );
+		
+	} */
+	
+	private function getUser( string $identifier ): User
+	{
+		$DatabaseRequestInterface = $this -> app -> repository -> get( 'query.database.select.users_username|email' )( name: $identifier );
 		
 		if ( $DatabaseRequestInterface -> count() )
 		{
@@ -37,24 +42,24 @@ class DatabaseUserProvider implements UserProviderInterface
 			return $user;
 		}
 		
-		$exception = new UserNotFoundException( sprintf ( 'Username \'%s\' not found in the database.', $username ) );
+		$exception = new UserNotFoundException( sprintf ( 'User \'%s\' not found in the database.', $identifier ) );
 		
-		$exception -> setUsername( $username );
+		$exception -> setUsername( $identifier );
 		
 		throw $exception;
 	}
 	
 	public function refreshUser( UserInterface $user ): User
 	{
-		if ( ! $user instanceof User )
+		if ( $user instanceof User )
 		{
-			throw new UnsupportedUserException( sprintf ( 'Instances of \'%s\' are not supported.', $user :: class ) );
+			return $this -> getUser( $user -> getUsername() );
 		}
 		
-		return $this -> getUser( $user -> getUsername() );
+		throw new UnsupportedUserException( sprintf ( 'Instances of \'%s\' are not supported.', $user :: class ) );
 	}
 	
-	public function supportsClass( string $class )
+	public function supportsClass( string $class ): bool
 	{
 		return User :: class === $class;
 	}

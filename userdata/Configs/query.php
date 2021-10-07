@@ -15,7 +15,7 @@ return [
 			*/
 			'users_username|email' => static function ( string $name ) use ( $app, $prefix_ ): DatabaseRequestInterface
 			{
-				return $this -> app -> database -> prepare( 
+				return $app -> database -> prepare( 
 					"SELECT 
 						`id`, `username`, `email`, `password`, `roles`, `create_at`
 					FROM 

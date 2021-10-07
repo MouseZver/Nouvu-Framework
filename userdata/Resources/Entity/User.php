@@ -17,6 +17,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	private ?string $email;
 	private ?string $password;
 	private array $roles = [];
+	private ?string 
 	
 	// ????????????????????? как id значение присвоится // __unserialize
 	public function getId(): ?int
@@ -24,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 		return $this -> id;
 	}
 	
-	public function setFullName( string $fullName ): void
+	/* public function setFullName( string $fullName ): void
 	{
 		$this -> fullName = $fullName;
 	}
@@ -32,7 +33,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 	public function getFullName(): ?string
 	{
 		return $this -> fullName;
-	}
+	} */
 	
 	public function getUserIdentifier(): ?string
 	{

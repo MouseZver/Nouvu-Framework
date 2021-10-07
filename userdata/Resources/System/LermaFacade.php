@@ -13,7 +13,7 @@ final class LermaFacade implements DatabaseToolsInterface
 {
 	private Lerma $connect;
 	
-	private \LermaStatement $statement;
+	private LermaStatement $statement;
 	
 	public function __construct ( private App $app )
 	{

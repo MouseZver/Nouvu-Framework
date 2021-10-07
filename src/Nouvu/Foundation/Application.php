@@ -40,7 +40,7 @@ class Application
 	
 	public function init(): void
 	{
-		foreach ( $this -> config -> get( 'app.ini_set' ) AS $option => $value )
+		foreach ( $this -> repository -> get( 'app.ini_set' ) AS $option => $value )
 		{
 			ini_set ( $option, ( string ) $value( $this ) );
 		}

@@ -100,13 +100,13 @@ return
 	{
 		$app = $container -> get( \App :: class );
 		
-		$config = $container -> get( \Config :: class );
+		$repository = $app -> repository;
 		
-		$viewer = new \Nouvu\Web\View\Viewer( $container -> get( \Request :: class ), $container -> get( \Response :: class ) );
+		$viewer = new \Nouvu\Web\View\Viewer( $app -> request, $app -> response );
 		
 		foreach ( [ 'path', 'layout', 'extension', 'title', 'head' ] AS $name )
 		{
-			$viewer -> { 'set' . ucfirst ( $name ) }( $config );
+			$viewer -> { 'set' . ucfirst ( $name ) }( $repository );
 		}
 		
 		return $viewer;
