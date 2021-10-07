@@ -16,7 +16,7 @@ class Model //implements ...
 	
 	public function __invoke()
 	{
-		return $this -> app -> config -> get( 'viewer.include' );
+		return $this -> app -> repository -> get( 'viewer.include' );
 	}
 	
 	/* public function closure(): Closure

@@ -24,7 +24,7 @@ class Kernel
 	{
 		$app -> init();
 		
-		foreach ( $app -> config -> get( 'app.middlewareSystem' ) AS $name )
+		foreach ( $app -> repository -> get( 'app.middlewareSystem' ) AS $name )
 		{
 			$app -> {$name};/*  = fn(): $class => new $class( $app ); */
 		}

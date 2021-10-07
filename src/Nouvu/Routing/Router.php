@@ -19,7 +19,7 @@ class Router
 	
 	public function __construct ( private App $app )
 	{
-		$this -> routing = $app -> config -> get( 'router.closure' )( $app );
+		$this -> routing = $app -> repository -> get( 'router.closure' )( $app );
 		
 		foreach ( $this -> routing AS $name => [ 'edit' => $edit, 'route' => $route ] )
 		{

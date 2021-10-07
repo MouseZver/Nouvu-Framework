@@ -22,6 +22,6 @@ return [
 	*/
 	'include' => function ( string $template ) use ( $app )
 	{
-		include $template . $app -> config -> get( 'viewer.extension' );
+		include $template . $app -> repository -> get( 'viewer.extension' );
 	},
 ];

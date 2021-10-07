@@ -2,8 +2,6 @@
 
 use Nouvu\Web\Components\Database\DatabaseRequestInterface;
 
-$prefix_ = $app -> repository -> get( 'database.prefix' );
-
 return [
 	/*
 		- 
@@ -13,8 +11,10 @@ return [
 			/*
 				- 
 			*/
-			'users_username|email' => static function ( string $name ) use ( $app, $prefix_ ): DatabaseRequestInterface
+			'users_username|email' => static function ( string $name ) use ( $app ): DatabaseRequestInterface
 			{
+				$prefix_ = $app -> repository -> get( 'database.prefix' );
+				
 				return $app -> database -> prepare( 
 					"SELECT 
 						`id`, `username`, `email`, `password`, `roles`, `create_at`

@@ -10,24 +10,21 @@ trait App
 {
 	public function getLocale(): string
 	{
-		return $this -> config -> get( 'config.locale' );
+		return $this -> repository -> get( 'config.locale' );
 	}
 	
 	public function getCharset(): string
 	{
-		return $this -> config -> get( 'config.default_charset' );
+		return $this -> repository -> get( 'config.default_charset' );
 	}
 	
 	public function make( string $class, array $params = [] ): mixed
 	{
-		/* return $this -> getContainer( \Container :: class ) 
-			-> make( $class, fn( ContainerInterface $ContainerInterface ): mixed => new $class( ...$params ) ); */
-		
 		return $this -> container -> make( $class, $params );
 	}
 	
-	public function path( string $name ): string | null
+	public function path( string $name ): ?string
 	{
-		return $this -> config -> get( 'app.system.directory.' . $name );
+		return $this -> repository -> get( 'app.system.directory.' . $name );
 	}
 }
