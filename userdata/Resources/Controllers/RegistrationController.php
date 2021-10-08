@@ -35,9 +35,11 @@ final class RegistrationController extends BaseController
 			$user -> setPassword( $password );
 			
 			// 4) save the User!
-			$entityManager = $this -> getDoctrine() -> getManager();
+			/* $entityManager = $this -> getDoctrine() -> getManager();
 			$entityManager -> persist( $user );
-			$entityManager -> flush();
+			$entityManager -> flush(); */
+			
+			$this -> app -> repository -> get( 'query.database.insert.users_register' )( $user );
 			
 			// ... do any other work - like sending them an email, etc
 			// maybe set a "flash" success message for the user
