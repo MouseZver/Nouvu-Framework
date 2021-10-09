@@ -7,18 +7,18 @@ namespace Nouvu\Web\Http;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException AS SymfonyRoutingNotFound;
 use Symfony\Component\HttpFoundation\Response;
 use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\Foundation\Table;
 use Nouvu\Web\Http\Controllers\KernelController;
 use Nouvu\Web\Routing\RouteCollection AS NouvuCollection;
 use Nouvu\Web\Routing\RequestContext AS NouvuContext;
 use Nouvu\Web\Routing\UrlMatcher AS NouvuMatcher;
+use Nouvu\Web\Routing\{ CollectionTrait, ContextTrait };
 use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Resources\Controllers;
 
 class Kernel
 {
-	use Table\CollectAble;
-	use Table\ContextAble;
+	use CollectionTrait;
+	use ContextTrait;
 	
 	public function __construct ( protected App $app )
 	{
@@ -68,7 +68,7 @@ class Kernel
 	
 	public function getCommit(): CommitRepository
 	{
-		$KernelController = new KernelController( $this -> app ); // ??????????????????????????????????????????????????????
+		$KernelController = new KernelController( $this -> app );
 		
 		return $KernelController -> getController( Controllers :: class ) -> action();
 	}

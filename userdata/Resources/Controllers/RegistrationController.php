@@ -4,19 +4,17 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Resources\Controllers;
 
-//use App\Form\UserType;
-//use App\Entity\User;
 //use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+//use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-use Nouvu\Web\Http\Controllers\BaseController;
+use Nouvu\Web\Http\Controllers\AbstractController;
 use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Resources\Entity\User;
 use Nouvu\Resources\Form\UserType;
 
-final class RegistrationController extends BaseController
+final class RegistrationController extends AbstractController
 {
 	public function register(): CommitRepository
 	{

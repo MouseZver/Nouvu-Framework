@@ -4,10 +4,10 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Resources\Controllers;
 
-use Nouvu\Web\Http\Controllers\BaseController;
+use Nouvu\Web\Http\Controllers\AbstractController;
 use Nouvu\Web\View\Repository\CommitRepository;
 
-final class MainController extends BaseController
+final class MainController extends AbstractController
 {
 	public function index(): CommitRepository
 	{

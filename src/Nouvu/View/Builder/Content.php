@@ -19,17 +19,19 @@ class Content
 	
 	protected function replaceCode( string $template, string $content ): string
 	{
-		return ( string ) new ShortTag( [ $this, $this -> commit -> get( 'model' ) ], function ( array $matches ) use ( $template ): string
-		{
-			$file = dirname ( $template ) . DIRECTORY_SEPARATOR . $matches[1];
-			
-			if ( file_exists ( $file . $this -> commit -> get( 'extension' ) ) )
+		return ( string ) new ShortTag( 
+			[ $this, $this -> commit -> get( 'controller' ), $this -> commit -> get( 'model' ) ], 
+			function ( array $matches ) use ( $template ): string
 			{
-				return $this -> getHtml( $file );
-			}
-			
-			return "<!-- Not found ({$matches[1]}) -->";
-		}, 
+				$file = dirname ( $template ) . DIRECTORY_SEPARATOR . $matches[1];
+				
+				if ( file_exists ( $file . $this -> commit -> get( 'extension' ) ) )
+				{
+					return $this -> getHtml( $file );
+				}
+				
+				return "<!-- Not found ({$matches[1]}) -->";
+			}, 
 		$content );
 	}
 	
@@ -74,10 +76,12 @@ class Content
 	{
 		ob_start ();
 		
-		$closure = $this -> commit -> get( 'model' )();
+		$closure = $this -> commit -> get( 'controller' )();
 		
 		$closure( $name );
 		
 		return $this -> replaceCode( $name, ob_get_clean () );
 	}
+	
+	
 }

@@ -8,7 +8,7 @@ use Psr\Container\ContainerInterface;
 
 class Application
 {
-	use Table\App;
+	use ApplicationTrait;
 	
 	public function __construct ( private ContainerInterface $ContainerInterface, array $tools )
 	{

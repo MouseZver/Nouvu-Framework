@@ -4,12 +4,9 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\View;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{ Request, Response };
 use Nouvu\Web\View\Builder\Content;
-use Nouvu\Web\View\Repository\CommitRepository;
-use Nouvu\Web\View\Repository\HeadRepository;
-use Nouvu\Web\View\Repository\TitleRepository;
+use Nouvu\Web\View\Repository\{ CommitRepository, HeadRepository, TitleRepository };
 use Nouvu\Web\Component\Config\Repository;
 
 final class Viewer

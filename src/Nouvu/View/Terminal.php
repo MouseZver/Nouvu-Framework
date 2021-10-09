@@ -37,6 +37,7 @@ class Terminal
 		{
 			$title = $build -> getTitle();
 			
+			// JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ??
 			return json_encode ( compact ( 'content', 'title' ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		} );
 	}

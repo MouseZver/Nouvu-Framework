@@ -5,7 +5,6 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\Routing;
 
 use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\Foundation\Table;
 use Nouvu\Web\Routing\RouteCollection AS NouvuCollection;
 use Nouvu\Web\Routing\RequestContext AS NouvuContext;
 use Nouvu\Web\Routing\UrlMatcher AS NouvuMatcher;
@@ -14,8 +13,8 @@ class Router
 {
 	private array $routing;
 	
-	use Table\CollectAble;
-	use Table\ContextAble;
+	use CollectionTrait;
+	use ContextTrait;
 	
 	public function __construct ( private App $app )
 	{
