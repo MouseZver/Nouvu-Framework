@@ -87,14 +87,18 @@ class Kernel
 			
 			return $this -> getCommit();
 		}
-		catch ( SymfonyRoutingNotFound )
+		catch ( SymfonyRoutingNotFound $e )
 		{
+			error_log ( $e -> getMessage() );
+			
 			$this -> setRequestAttributes( $this -> getAttributesNotFound( $NouvuMatcher ) );
 			
 			return $this -> getCommit();
 		}
-		catch ( \Throwable )
+		catch ( \Throwable $e )
 		{
+			error_log ( $e -> getMessage() );
+			
 			$this -> setRequestAttributes( $this -> getAttributesError( $NouvuMatcher ) );
 			
 			return $this -> getCommit();
