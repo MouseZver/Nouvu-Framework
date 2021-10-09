@@ -17,7 +17,7 @@ final class MainController extends AbstractController
 		{
 			return $this -> json( 'index' );
 		}
-		//require '1.php'; // Ошибку тестим
+		
 		return $this -> render( 'index' );
 	}
 	
@@ -40,5 +40,12 @@ final class MainController extends AbstractController
 		$this -> title( [ 'Ошибка сервера' ], true );
 		
 		return $this -> render( 'error.500', 'error-template' );
+	}
+	
+	public function testError(): CommitRepository
+	{
+		require '1.php'; // Test error
+		
+		return $this -> render( 'index' );
 	}
 }

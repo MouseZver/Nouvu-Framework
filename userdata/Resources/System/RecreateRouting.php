@@ -17,6 +17,12 @@ final class RecreateRouting
 				'controller' => [ '_controller' => [ 'Main', 'err500' ] ],
 			],
 		],
+		'TestError' => [
+			'route' => [
+				'path' => '/error',
+				'controller' => [ '_controller' => [ 'Main', 'testError' ] ],
+			]
+		],
 		'Welcome' => [
 			'route' => [
 				'path' => '/welcome',
