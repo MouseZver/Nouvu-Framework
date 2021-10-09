@@ -97,8 +97,6 @@ class Kernel
 		}
 		catch ( \Throwable $e )
 		{
-			error_log ( $e -> getMessage() );
-			
 			$this -> setRequestAttributes( $this -> getAttributesError( $NouvuMatcher ) );
 			
 			return $this -> getCommit();
