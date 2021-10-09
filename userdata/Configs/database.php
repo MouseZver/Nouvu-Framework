@@ -28,5 +28,5 @@ return [
 	},
 	'class' => \Nouvu\Resources\System\LermaFacade :: class,
 	
-	'prefix' => 'uvu',
+	'prefix' => 'uvu_',
 ];
