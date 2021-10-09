@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Http\Routing;
+namespace Nouvu\Web\Routing;
 
 use Nouvu\Web\Routing\RequestContext;
 
