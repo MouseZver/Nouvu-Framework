@@ -37,11 +37,11 @@ return [
 			/*
 				- 
 			*/
-			'users_register' => static function ( UserInterface $user ) use ( $app ): void
+			'users_register' => static function ( UserInterface $user ) use ( $app ): int
 			{
 				$prefix_ = $app -> repository -> get( 'database.prefix' );
 				
-				$app -> database -> prepare( 
+				$result = $app -> database -> prepare( 
 					"INSERT INTO {$prefix_}users 
 						( `username`, `email`, `password`, `roles` )
 					VALUES
@@ -53,6 +53,8 @@ return [
 						$user -> getRoles() 
 					]
 				);
+				
+				return $result -> id();
 			},
 		],
 		'update' => [],

@@ -57,4 +57,9 @@ final class LermaFacade implements DatabaseToolsInterface
 			$argument
 		);
 	}
+	
+	public function id(): int
+	{
+		return $this -> connect -> InsertID();
+	}
 }

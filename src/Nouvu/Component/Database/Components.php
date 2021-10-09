@@ -32,4 +32,9 @@ class Components implements DatabaseRequestInterface
 	{
 		return $this -> DatabaseToolsInterface -> getAll( $code, $argument );
 	}
+	
+	public function id(): int
+	{
+		return $this -> DatabaseToolsInterface -> id();
+	}
 }
