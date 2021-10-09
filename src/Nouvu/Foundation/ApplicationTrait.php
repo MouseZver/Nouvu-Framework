@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Foundation\Table;
+namespace Nouvu\Web\Foundation;
 
 use Psr\Container\ContainerInterface;
 

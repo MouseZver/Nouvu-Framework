@@ -4,22 +4,24 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Http\Controllers;
 
-use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\Foundation\User\AbstractModel;
+use Nouvu\Web\Foundation\{ Application, ApplicationTrait };
 use Nouvu\Web\View\Repository\CommitRepository;
+use Nouvu\Web\Resources\Model\AbstractModel;
 
 class AbstractController
 {
 	private $nameModel;
 	
-	public function __construct ( protected App $app )
+	use ApplicationTrait;
+	
+	public function __construct ( protected Application $app )
 	{
 		$this -> nameModel = str_replace ( \Controller :: class, \Model :: class, static :: class );
 	}
 	
 	protected function getModel(): AbstractModel
 	{
-		return $app -> make( $this -> nameModel, [ $app ] );
+		return $this -> make( $this -> nameModel, [ $this -> app ] );
 	}
 	
 	private function getCommitInstance( array $data ): CommitRepository
@@ -87,12 +89,6 @@ class AbstractController
 	public function __invoke()
 	{
 		return $this -> app -> repository -> get( 'viewer.include' );
-	}
-	
-	// {<{locale}>}
-	public function getLocale(): string
-	{
-		return $this -> app -> getLocale();
 	}
 
 // -------------------------------------------- NEW
