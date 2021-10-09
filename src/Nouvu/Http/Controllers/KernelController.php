@@ -11,7 +11,7 @@ class KernelController
 {
 	private InputController $InputController;
 	
-	private static BaseController $BaseController;
+	private static AbstractController $AbstractController;
 	
 	public function __construct ( private App $app )
 	{
@@ -20,14 +20,14 @@ class KernelController
 	
 	public function getController( string $name ): self
 	{
-		self :: $BaseController ??= new ( $name . '\\' . $this -> InputController -> getControllerName() . 'Controller' )( $this -> app );
+		self :: $AbstractController ??= new ( $name . '\\' . $this -> InputController -> getControllerName() . 'Controller' )( $this -> app );
 		
 		return $this;
 	}
 	
 	public function action(): CommitRepository
 	{
-		$method = new \ReflectionMethod( self :: $BaseController, $this -> InputController -> getActionName() );
+		$method = new \ReflectionMethod( self :: $AbstractController, $this -> InputController -> getActionName() );
 		
 		$names = array_column ( $method -> getParameters(), 'name' );
 		
@@ -46,6 +46,6 @@ class KernelController
 			}
 		}
 		
-		return self :: $BaseController -> {$this -> InputController -> getActionName()}( ...$arguments );
+		return self :: $AbstractController -> {$this -> InputController -> getActionName()}( ...$arguments );
 	}
 }
