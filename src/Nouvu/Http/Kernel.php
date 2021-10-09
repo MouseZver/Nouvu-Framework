@@ -97,6 +97,12 @@ class Kernel
 		}
 		catch ( \Throwable $e )
 		{
+			error_log ( $e -> getMessage() );
+			
+			error_log ( 'File: ' . $e -> getFile() );
+			
+			error_log ( 'Line: ' . $e -> getLine() );
+			
 			$this -> setRequestAttributes( $this -> getAttributesError( $NouvuMatcher ) );
 			
 			return $this -> getCommit();
