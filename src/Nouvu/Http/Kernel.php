@@ -17,8 +17,7 @@ use Nouvu\Resources\Controllers;
 
 class Kernel
 {
-	use CollectionTrait;
-	use ContextTrait;
+	use CollectionTrait, ContextTrait;
 	
 	public function __construct ( protected App $app )
 	{
