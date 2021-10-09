@@ -29,6 +29,12 @@ final class RecreateRouting
 				'controller' => [ '_controller' => [ 'Main', 'index' ] ],
 			]
 		],
+		'Регистрация' => [
+			'route' => [
+				'path' => '/registration',
+				'controller' => [ '_controller' => [ 'RegistrationController', 'index' ] ],
+			]
+		],
 	];
 	
 	private static array $template = [
