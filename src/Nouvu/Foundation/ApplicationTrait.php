@@ -6,7 +6,7 @@ namespace Nouvu\Web\Foundation;
 
 use Psr\Container\ContainerInterface;
 
-trait Application
+trait ApplicationTrait
 {
 	public function getLocale(): string
 	{
