@@ -11,7 +11,7 @@ class KernelController
 {
 	private InputController $InputController;
 	
-	private static AbstractController $AbstractController;
+	private AbstractController $AbstractController;
 	
 	public function __construct ( private App $app )
 	{
@@ -20,7 +20,7 @@ class KernelController
 	
 	public function getController( string $name ): self
 	{
-		self :: $AbstractController ??= new ( $name . '\\' . $this -> InputController -> getControllerName() . 'Controller' )( $this -> app );
+		$this -> AbstractController ??= new ( $name . '\\' . $this -> InputController -> getControllerName() . 'Controller' )( $this -> app );
 		
 		return $this;
 	}
@@ -46,6 +46,6 @@ class KernelController
 			}
 		}
 		
-		return self :: $AbstractController -> {$this -> InputController -> getActionName()}( ...$arguments );
+		return $this -> AbstractController -> {$this -> InputController -> getActionName()}( ...$arguments );
 	}
 }
