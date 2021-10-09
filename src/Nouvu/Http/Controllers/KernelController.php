@@ -27,7 +27,7 @@ class KernelController
 	
 	public function action(): CommitRepository
 	{
-		$method = new \ReflectionMethod( self :: $AbstractController, $this -> InputController -> getActionName() );
+		$method = new \ReflectionMethod( $this -> AbstractController, $this -> InputController -> getActionName() );
 		
 		$names = array_column ( $method -> getParameters(), 'name' );
 		
