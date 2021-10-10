@@ -38,7 +38,7 @@ final class RecreateRouting
 		'Регистрация' => [
 			'route' => [
 				'path' => '/registration',
-				'controller' => [ '_controller' => [ 'Registration', 'index' ] ],
+				'controller' => [ '_controller' => [ 'Registration', 'register' ] ],
 			]
 		],
 	];

@@ -5,19 +5,19 @@ return [
 		- 
 	*/
 	'entity' => [
-		'user' => function ( int $id, string $username, string $email, string $password, string $roles = '[]', string $create_at = null ): void
+		'user' => function ( int $id, string $username, string $email, string $password, string $roles = '[]', string $create_at ): void
 		{
 			$this -> id = $id;
 			
-			$this -> username = $username;
+			$this -> setUsername( $username );
 			
-			$this -> email = $email;
+			$this -> setEmail( $email );
 			
-			$this -> password = $password;
+			$this -> setPassword( $password );
 			
-			$this -> roles = json_decode ( $roles, true );
+			$this -> setRoles( json_decode ( $roles, true ) );
 			
-			$this -> create_at = $create_at;
+			$this -> setCreatedAt( $create_at );
 		},
 	],
 ];

@@ -130,6 +130,24 @@ return
 	},
 	
 	/*
+		- Без getFormFactory();
+	*/
+	'form.factory' => static function ( ContainerInterface $container ): \Symfony\Component\Form\FormFactoryBuilderInterface
+	{
+		return \Symfony\Component\Form\Forms :: createFormFactoryBuilder();
+	},
+	
+	
+	/*
+		- 
+	*/
+	'encoder.factory' => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface
+	{
+		return new \Symfony\Component\Security\Core\Encoder\EncoderFactory( $container -> get( \Repository :: class ) -> get( 'security.encoder' ) );
+	},
+	
+// -----------------------------------------------------------------------------------------------------------------------------
+	/*
 		- 
 	*/
 	\Security :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Security

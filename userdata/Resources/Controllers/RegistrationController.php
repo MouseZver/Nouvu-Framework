@@ -4,15 +4,11 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Resources\Controllers;
 
-//use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-//use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-
 use Nouvu\Web\Http\Controllers\AbstractController;
 use Nouvu\Web\View\Repository\CommitRepository;
-use Nouvu\Resources\Entity\User;
-use Nouvu\Resources\Form\UserType;
+use Nouvu\Resources\{ Entity\User, Form\UserType };
 
 final class RegistrationController extends AbstractController
 {
@@ -24,12 +20,14 @@ final class RegistrationController extends AbstractController
 		$form = $this -> createForm( UserType :: class, $user );
 
 		// 2) handle the submit (will only happen on POST)
-		$form -> handleRequest( $this -> app -> request -> request );
+		$form -> handleRequest( $this -> getPost() );
 		
 		if ( $form -> isSubmitted() && $form -> isValid() )
 		{
+			
 			// 3) Encode the password (you could also do this via Doctrine listener)
-			$password = $passwordEncoder -> encodePassword( $user, $user -> getPlainPassword() );
+			$password = $this -> getEncoder( $user ) -> encodePassword( $user, $user -> getPlainPassword() );
+			
 			$user -> setPassword( $password );
 			
 			// 4) save the User!
@@ -42,10 +40,10 @@ final class RegistrationController extends AbstractController
 			// ... do any other work - like sending them an email, etc
 			// maybe set a "flash" success message for the user
 			
-			return $this -> redirectToRoute('replace_with_some_route');
+			//return $this -> redirectToRoute('replace_with_some_route');
 		}
 		
-		return $this -> render( 'registration/register.html.twig', [ 'form' => $form -> createView() ] );
+		//return $this -> render( 'registration/register.html.twig', [ 'form' => $form -> createView() ] );
 		
 		
 		

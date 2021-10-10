@@ -4,6 +4,9 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Http\Controllers;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Form\FormInterface;
 use Nouvu\Web\Foundation\{ Application, ApplicationTrait };
 use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Web\Resources\Model\AbstractModel;
@@ -90,19 +93,25 @@ class AbstractController
 	{
 		return $this -> app -> repository -> get( 'viewer.include' );
 	}
-
-// -------------------------------------------- NEW
-	protected function createForm(string $type, $data = null, array $options = []): FormInterface
-    {
-        return $this->container->get('form.factory')->create($type, $data, $options);
-    }
 	
-	protected function isGranted($attribute, $subject = null): bool
-    {
-        if (!$this->container->has('security.authorization_checker')) {
-            throw new \LogicException('The SecurityBundle is not registered in your application. Try running "composer require symfony/security-bundle".');
-        }
+	protected function getPost()//: ???
+	{
+		return $this -> app -> request -> request;
+	}
+	
+	protected function getEncoder( UserInterface $user ): PasswordEncoderInterface
+	{
+		return $this -> app -> container -> get( 'encoder.factory' ) -> getEncoder( $user );
+	}
+	
+// -------------------------------------------- NEW
+	protected function createForm( string $type, mixed $data = null, array $options = [] ): FormInterface
+	{
+		return $this -> app -> container -> get( 'form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
+	}
 
-        return $this->container->get('security.authorization_checker')->isGranted($attribute, $subject);
-    }
+	protected function isGranted( /* ?????? */ $attribute, $subject = null ): bool
+	{
+		return $this -> app -> container -> get( 'security.authorization_checker' ) -> isGranted( $attribute, $subject );
+	}
 }
