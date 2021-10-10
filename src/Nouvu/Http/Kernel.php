@@ -97,11 +97,16 @@ class Kernel
 		}
 		catch ( \Throwable $e )
 		{
-			error_log ( $e -> getMessage() );
+			/* error_log ( $e -> getMessage() );
 			
 			error_log ( 'File: ' . $e -> getFile() );
 			
-			error_log ( 'Line: ' . $e -> getLine() );
+			error_log ( 'Line: ' . $e -> getLine() ); */
+			
+			if ( $this -> app -> repository -> get( 'config.debug.display' ) )
+			{
+				throw $e;
+			}
 			
 			$this -> setRequestAttributes( $this -> getAttributesError( $NouvuMatcher ) );
 			

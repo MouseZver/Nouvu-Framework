@@ -7,9 +7,9 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Resources\Entity;
 
-use Symfony\Component\Security\Core\User\{ UserInterface, PasswordAuthenticatedUserInterface };
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface
 {
 	private int | null $id = null;
 	private string | null $username = null;

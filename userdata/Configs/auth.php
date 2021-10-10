@@ -5,7 +5,7 @@ return [
 		- 
 	*/
 	'entity' => [
-		'user' => function ( int $id, string $username, string $email, string $password, string $roles = '[]', string $create_at ): void
+		'user' => function ( int $id, string $username, string $email, string $password, string $roles, string $create_at ): void
 		{
 			$this -> id = $id;
 			

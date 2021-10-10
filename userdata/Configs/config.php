@@ -32,7 +32,7 @@ return [
 	*/
 	'debug' => [
 		'error' => true,
-		'display' => false,
+		'display' => true,
 		'error_log' => 'Logs/Debug-%s.log',
 		'log_errors_max_len' => 0,
 		'ignore_repeated_errors' => false,
