@@ -18,40 +18,48 @@ final class RegistrationController extends AbstractController
 		$user = new User();
 		
 		$form = $this -> createForm( UserType :: class, $user );
-
-		// 2) handle the submit (will only happen on POST)
-		$form -> handleRequest( $this -> getPost() );
 		
-		if ( $form -> isSubmitted() && $form -> isValid() )
+		// свои $_GET, $_POST, ...
+		// 2) handle the submit (will only happen on POST)
+		$form -> handleRequest();
+		
+		$isSubmitted = $form -> isSubmitted();
+		
+		var_dump ( $isSubmitted );
+		
+		if ( $isSubmitted && $form -> isValid() )
 		{
-			
 			// 3) Encode the password (you could also do this via Doctrine listener)
 			$password = $this -> getEncoder( $user ) -> encodePassword( $user, $user -> getPlainPassword() );
 			
 			$user -> setPassword( $password );
 			
 			// 4) save the User!
-			/* $entityManager = $this -> getDoctrine() -> getManager();
-			$entityManager -> persist( $user );
-			$entityManager -> flush(); */
-			
-			$this -> app -> repository -> get( 'query.database.insert.users_register' )( $user );
+			//$this -> app -> repository -> get( 'query.database.insert.users_register' )( $user );
 			
 			// ... do any other work - like sending them an email, etc
 			// maybe set a "flash" success message for the user
 			
 			//return $this -> redirectToRoute('replace_with_some_route');
+			
+			var_dump ( 111 );
 		}
 		
 		//return $this -> render( 'registration/register.html.twig', [ 'form' => $form -> createView() ] );
 		
+		// Symfony\Component\Form\FormView
+		//var_dump ( $form->createView() :: class );
 		
+		/* foreach ( $form->createView() AS $her )
+		{
+			//var_dump ( $her ); exit; улетает в бесконечность
+		} */
 		
 		
 		
 		$this -> title( [ 'Регистрация' ] );
 		
-		return $this -> render( 'error.404', 'error-template' );
-		//return $this -> render( 'registration/register', 'default-template' );
+		//return $this -> render( 'error.404', 'error-template' );
+		return $this -> render( 'user/register', 'default-template' );
 	}
 }

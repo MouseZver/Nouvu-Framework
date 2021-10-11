@@ -39,6 +39,7 @@ final class RecreateRouting
 			'route' => [
 				'path' => '/registration',
 				'controller' => [ '_controller' => [ 'Registration', 'register' ] ],
+				'methods' => [ 'GET', 'POST' ],
 			]
 		],
 	];

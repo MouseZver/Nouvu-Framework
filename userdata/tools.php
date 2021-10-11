@@ -2,8 +2,7 @@
 
 use Psr\Container\ContainerInterface;
 
-return
-[
+return [
 	/*
 		- example tool
 	*/

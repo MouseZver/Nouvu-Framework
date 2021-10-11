@@ -94,24 +94,24 @@ class AbstractController
 		return $this -> app -> repository -> get( 'viewer.include' );
 	}
 	
-	protected function getPost()//: ???
+	protected function getPost(): array
 	{
-		return $this -> app -> request -> request;
+		return $this -> app -> request -> request -> all();
 	}
 	
 	protected function getEncoder( UserInterface $user ): PasswordEncoderInterface
 	{
-		return $this -> app -> container -> get( 'encoder.factory' ) -> getEncoder( $user );
+		return $this -> app -> container -> get( 'Encoder.factory' ) -> getEncoder( $user );
 	}
 	
 // -------------------------------------------- NEW
 	protected function createForm( string $type, mixed $data = null, array $options = [] ): FormInterface
 	{
-		return $this -> app -> container -> get( 'form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
+		return $this -> app -> container -> get( 'Form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
 	}
 
 	protected function isGranted( /* ?????? */ $attribute, $subject = null ): bool
 	{
-		return $this -> app -> container -> get( 'security.authorization_checker' ) -> isGranted( $attribute, $subject );
+		return $this -> app -> container -> get( 'Security.authorization_checker' ) -> isGranted( $attribute, $subject );
 	}
 }
