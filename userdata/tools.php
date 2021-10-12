@@ -129,6 +129,14 @@ return [
 	},
 	
 	/*
+		- 
+	*/
+	\Validator :: class => static function ( ContainerInterface $container ): \Symfony\Component\Validator\Validator\ValidatorInterface
+	{
+		return \Symfony\Component\Validator\Validation :: createValidator();
+	},
+	
+	/*
 		- Без getFormFactory();
 	*/
 	'form.factory' => static function ( ContainerInterface $container ): \Symfony\Component\Form\FormFactoryBuilderInterface
@@ -142,7 +150,9 @@ return [
 	*/
 	'encoder.factory' => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface
 	{
-		return new \Symfony\Component\Security\Core\Encoder\EncoderFactory( $container -> get( \Repository :: class ) -> get( 'security.encoder' ) );
+		$closure = $container -> get( \Repository :: class ) -> get( 'security.encoder' );
+		
+		return new \Symfony\Component\Security\Core\Encoder\EncoderFactory( $closure() );
 	},
 	
 // -----------------------------------------------------------------------------------------------------------------------------

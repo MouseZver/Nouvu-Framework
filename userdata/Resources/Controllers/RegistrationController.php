@@ -8,11 +8,32 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Nouvu\Web\Http\Controllers\AbstractController;
 use Nouvu\Web\View\Repository\CommitRepository;
-use Nouvu\Resources\{ Entity\User, Form\UserType };
+use Nouvu\Resources\{ Entity\User, Entity\UserRegisterType, Form\UserType };
 
 final class RegistrationController extends AbstractController
 {
 	public function register(): CommitRepository
+	{
+		if ( $this -> app -> request -> isMethod( 'POST' ) )
+		{
+			$reg = new UserRegisterType;
+			
+			$errors = $this -> app -> validator -> validate( $reg );
+			
+			var_dump ( $errors );
+		}
+		
+		return $this -> render( 'user/register', 'default-template' );
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public function _register(): CommitRepository
 	{
 		// 1) build the form
 		$user = new User();
@@ -22,15 +43,16 @@ final class RegistrationController extends AbstractController
 		// свои $_GET, $_POST, ...
 		// 2) handle the submit (will only happen on POST)
 		$form -> handleRequest();
+		//$form->bindRequest($this -> app -> request);
 		
 		$isSubmitted = $form -> isSubmitted();
 		
 		var_dump ( $isSubmitted );
 		
-		if ( $isSubmitted && $form -> isValid() )
+		if ( $this -> app -> request -> isMethod( 'POST' ) && $isSubmitted && $form -> isValid() )
 		{
 			// 3) Encode the password (you could also do this via Doctrine listener)
-			$password = $this -> getEncoder( $user ) -> encodePassword( $user, $user -> getPlainPassword() );
+			$password = $this -> getEncoder( $user ) -> encodePassword( User :: class, $user -> getPlainPassword() );
 			
 			$user -> setPassword( $password );
 			
@@ -42,7 +64,7 @@ final class RegistrationController extends AbstractController
 			
 			//return $this -> redirectToRoute('replace_with_some_route');
 			
-			var_dump ( 111 );
+			var_dump ( 111, $user );
 		}
 		
 		//return $this -> render( 'registration/register.html.twig', [ 'form' => $form -> createView() ] );
@@ -50,11 +72,14 @@ final class RegistrationController extends AbstractController
 		// Symfony\Component\Form\FormView
 		//var_dump ( $form->createView() :: class );
 		
-		/* foreach ( $form->createView() AS $her )
-		{
-			//var_dump ( $her ); exit; улетает в бесконечность
-		} */
+		/* $model = $this -> getModel();
 		
+		$model -> saveFormView( $form ); */
+		
+		foreach ( $form->createView() -> getIterator() AS $field )
+		{
+			print_r ( $field -> vars['full_name'] );
+		}
 		
 		
 		$this -> title( [ 'Регистрация' ] );
