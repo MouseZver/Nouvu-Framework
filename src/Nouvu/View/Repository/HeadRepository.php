@@ -5,7 +5,7 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\View\Repository;
 
 use Nouvu\Web\Component\Config\Repository;
-use Nouvu\Web\View\Builder\CreateHtml;
+use Nouvu\Web\View\Builder\BuilderHtml;
 
 final class HeadRepository extends Repository
 {
@@ -23,7 +23,7 @@ final class HeadRepository extends Repository
 	{
 		foreach ( $this -> getSelected() AS $tag )
 		{
-			yield new CreateHtml( $this -> get( 'list.' . $tag ) );
+			yield new BuilderHtml( $this -> get( 'list.' . $tag ) );
 		}
 	}
 }
