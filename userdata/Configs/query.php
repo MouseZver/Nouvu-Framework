@@ -1,6 +1,6 @@
 <?php
 
-use Nouvu\Web\Components\Database\DatabaseRequestInterface;
+use Nouvu\Web\Component\Database\DatabaseRequestInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 return [
@@ -12,7 +12,7 @@ return [
 			/*
 				- 
 			*/
-			'users_username|email' => static function ( string $name ) use ( $app ): DatabaseRequestInterface
+			'users_username|email' => static function ( string $username, string $email ) use ( $app ): DatabaseRequestInterface
 			{
 				$prefix_ = $app -> repository -> get( 'database.prefix' );
 				
@@ -22,9 +22,10 @@ return [
 					FROM 
 						{$prefix_}users 
 					WHERE 
-						`username` = :name OR `email` = :name", 
+						`username` = ? OR `email` = ?", 
 					[
-						'name' => $name
+						$username,
+						$email
 					]
 				);
 			},
@@ -50,7 +51,7 @@ return [
 						$user -> getUsername(), 
 						$user -> getEmail(), 
 						$user -> getPassword(), 
-						$user -> getRoles() 
+						json_encode ( $user -> getRoles() )
 					]
 				);
 				

@@ -1,6 +1,6 @@
 <?php
 
-use Nouvu\Web\Components\Database\DatabaseInterface AS Nouvu;
+use Nouvu\Web\Component\Database\DatabaseRequestInterface AS Nouvu;
 use Nouvu\Database\Lerma;
 
 return [

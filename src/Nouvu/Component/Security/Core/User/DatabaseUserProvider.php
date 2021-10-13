@@ -30,7 +30,8 @@ class DatabaseUserProvider implements UserProviderInterface
 	
 	private function getUser( string $identifier ): User
 	{
-		$DatabaseRequestInterface = $this -> app -> repository -> get( 'query.database.select.users_username|email' )( name: $identifier );
+		$DatabaseRequestInterface = $this -> app -> repository 
+			-> get( 'query.database.select.users_username|email' )( $identifier, $identifier );
 		
 		if ( $DatabaseRequestInterface -> count() )
 		{

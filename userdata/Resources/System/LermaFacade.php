@@ -37,7 +37,7 @@ final class LermaFacade implements DatabaseToolsInterface
 	
 	public function count(): int
 	{
-		$this -> statement -> rowCount();
+		return $this -> statement -> rowCount();
 	}
 	
 	public function get( int $code, callable | string $argument = null ): mixed

@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Form\FormInterface;
 use Nouvu\Web\Foundation\{ Application, ApplicationTrait };
 use Nouvu\Web\View\Repository\CommitRepository;
-use Nouvu\Web\Resources\Model\AbstractModel;
+//use Nouvu\Web\Resources\Model\AbstractModel;
 
 class AbstractController
 {
@@ -22,7 +22,7 @@ class AbstractController
 		$this -> nameModel = str_replace ( \Controller :: class, \Model :: class, static :: class );
 	}
 	
-	protected function getModel(): AbstractModel
+	protected function getModel()
 	{
 		return $this -> make( $this -> nameModel, [ $this -> app ] );
 	}

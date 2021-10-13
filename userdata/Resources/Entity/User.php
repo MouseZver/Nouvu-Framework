@@ -1,8 +1,5 @@
 <?php
 
-// Deprecated
-// заменить на Symfony\Component\Security\Core\User\User.php
-
 declare ( strict_types = 1 );
 
 namespace Nouvu\Resources\Entity;
