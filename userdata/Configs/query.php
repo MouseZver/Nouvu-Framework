@@ -12,7 +12,7 @@ return [
 			/*
 				- 
 			*/
-			'users_username|email' => static function ( string $username, string $email ) use ( $app ): DatabaseRequestInterface
+			'users_username|email' => static function ( string $username = null, string $email = null ) use ( $app ): DatabaseRequestInterface
 			{
 				$prefix_ = $app -> repository -> get( 'database.prefix' );
 				

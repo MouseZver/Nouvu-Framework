@@ -42,6 +42,13 @@ final class RecreateRouting
 				'methods' => [ 'GET', 'POST' ],
 			]
 		],
+		'Авторизация' => [
+			'route' => [
+				'path' => '/login',
+				'controller' => [ '_controller' => [ 'Auth', 'login' ] ],
+				'methods' => [ 'GET', 'POST' ],
+			]
+		],
 	];
 	
 	private static array $template = [

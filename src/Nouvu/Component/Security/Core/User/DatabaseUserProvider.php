@@ -18,15 +18,15 @@ class DatabaseUserProvider implements UserProviderInterface
 		
 	}
 	
-	public function loadUserByUsername( string $username ): User
+	/* public function loadUserByUsername( string $string ): User
 	{
-		return $this -> getUser( $username );
-	}
-	
-	/* public function loadUserByIdentifier( ... ): User
-	{
-		
+		return $this -> getUser( $string );
 	} */
+	
+	public function loadUserByIdentifier( ... ): User
+	{
+		return $this -> getUser( $string );
+	}
 	
 	private function getUser( string $identifier ): User
 	{

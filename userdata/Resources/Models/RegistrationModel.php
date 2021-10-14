@@ -4,7 +4,7 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Resources\Models;
 
-use Symfony\Component\Form\FormView;
+//use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nouvu\Resources\Entity\User;
 //use Nouvu\Web\View\Builder\BuilderHtml;
@@ -42,7 +42,7 @@ final class RegistrationModel extends AbstractModel
 		
 		return implode ( PHP_EOL, array_map ( 
 			fn( $e ) => sprintf ( '<p>%s</p>', $e -> getMessage() ), 
-			iterator_to_array ( $errors ) 
+			$errors 
 		) );
 	}
 	
@@ -55,7 +55,7 @@ final class RegistrationModel extends AbstractModel
 			return [];
 		}
 		
-		return array_map ( fn( $e ) => $e -> getMessage(), iterator_to_array ( $errors ) );
+		return array_map ( fn( $e ) => $e -> getMessage(), $errors );
 	}
 	
 	public function getUser(): User
@@ -73,11 +73,8 @@ final class RegistrationModel extends AbstractModel
 		return $user;
 	}
 	
-	public function validator( array $input )
+	protected function constraint(): Assert\Collection
 	{
-		// This field was not expected.
-		unset ( $input['submit'] );
-		
 		$assertUsername = [ 
 			new Assert\Length( [ 
 				'min' => 3, 'max' => 50, 
@@ -86,7 +83,7 @@ final class RegistrationModel extends AbstractModel
 			] ),
 			new Assert\Regex( [ 
 				'pattern' => '/^\w+$/ui', 
-				'message' => 'Имя пользователя может содержать только латинские символы',
+				'message' => 'Имя пользователя может содержать только [A-Za-z0-9_] символы',
 			] )
 		];
 		
@@ -96,8 +93,10 @@ final class RegistrationModel extends AbstractModel
 		];
 		
 		$assertPassword = new Assert\Length( [ 
-			'min' => 6, 
+			'min' => 10, 
+			'max' => 100,
 			'minMessage' => 'Ваш пароль должен содержать не менее {{ limit }} символов',
+			'maxMessage' => 'Ваш пароль превышает {{ limit }} символов',
 		] );
 		
 		/* $assertConfirmPassword = new Assert\Length( [ 
@@ -111,21 +110,59 @@ final class RegistrationModel extends AbstractModel
 		
 		$assert_password = new Assert\IsTrue( [ 'message' => 'Ваш пароль не совпадает с паролем для подтверждения' ] );
 		
+		$assert_username_email = new Assert\IsTrue( [ 'message' => 'Ваше имя пользователя не должно быть одинаковым с эл. почтой' ] );
 		
-		$constraint = new Assert\Collection( [
+		
+		return new Assert\Collection( [
 			'username' => $assertUsername,
 			'email' => $assertEmail,
 			'password' => new Assert\Collection( [
 				'first' => $assertPassword,
 				'second' => [],
 			] ),
+			'submit' => [],
 			'_username' => $assert_username,
 			'_email' => $assert_email,
 			'_password' => $assert_password,
+			'_username|email' => $assert_username_email
 		] );
+	}
+	
+	public function validator( array $input, User $user ): array
+	{
+		$input['_username|email'] = $input['_username'] = $input['_email'] = $input['_password'] = true;
+		
+		if ( strcmp ( $this -> getFirstPassword(), $this -> getSecondPassword() ) != 0 )
+		{
+			$input['_password'] = false;
+		}
+		
+		if ( strcmp ( mb_strtolower ( $user -> getUsername() ), $user -> getEmail() ) == 0 )
+		{
+			$input['_username|email'] = false;
+		}
+		
+		// Поиск username или email
+		$select = $this -> app -> repository 
+			-> get( 'query.database.select.users_username|email' )( $user -> getUsername(), $user -> getEmail() );
+		
+		foreach ( $select -> getAll() AS $result )
+		{
+			if ( strcmp ( mb_strtolower ( $user -> getUsername() ), mb_strtolower ( $result -> username ) ) == 0 )
+			{
+				$input['_username'] = false;
+			}
+			
+			if ( strcmp ( $user -> getEmail(), $result -> email ) == 0 )
+			{
+				$input['_email'] = false;
+			}
+		}
+		
+		$constraint = $this -> constraint();
 		
 		$groups = new Assert\GroupSequence( [ 'Default', 'custom' ] );
 		
-		return $this -> app -> validator -> validate( $input, $constraint, $groups );
+		return iterator_to_array ( $this -> app -> validator -> validate( $input, $constraint, $groups ) );
 	}
 }

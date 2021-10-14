@@ -22,32 +22,7 @@ final class RegistrationController extends AbstractController
 			
 			$input = $this -> getPost();
 			
-			$input['_username'] = $input['_email'] = $input['_password'] = true;
-			
-			if ( strcmp ( $model -> getFirstPassword(), $model -> getSecondPassword() ) != 0 )
-			{
-				$input['_password'] = false;
-			}
-			
-			$select = $this -> app -> repository 
-				-> get( 'query.database.select.users_username|email' )( $user -> getUsername(), $user -> getEmail() );
-			
-			if ( $select -> count() )
-			{
-				$result = $select -> get();
-				
-				if ( strcasecmp ( $result -> username, $user -> getUsername() ) == 0 )
-				{
-					$input['_username'] = false;
-				}
-				
-				if ( strcasecmp ( $result -> email, $user -> getEmail() ) == 0 )
-				{
-					$input['_email'] = false;
-				}
-			}
-			
-			$errors = $model -> validator( $input );
+			$errors = $model -> validator( $input, $user );
 			
 			if ( count ( $errors ) )
 			{
