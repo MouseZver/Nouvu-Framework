@@ -20,7 +20,7 @@ class Application
 	
 	protected function setContainer( string $name, callable $packaging ): void
 	{
-		$this -> ContainerInterface -> set( ucfirst ( strtolower ( $name ) ), $packaging );
+		$this -> ContainerInterface -> set( $name, $packaging );
 	}
 	
 	protected function getContainer( string $name ): mixed
@@ -30,12 +30,12 @@ class Application
 	
 	public function __set( string $name, callable $value ): void
 	{
-		$this -> setContainer( ucfirst ( strtolower ( $name ) ), $value );
+		$this -> setContainer( $name, $value );
 	}
 	
 	public function __get( string $name ): mixed
 	{
-		return $this -> getContainer( ucfirst ( strtolower ( $name ) ) );
+		return $this -> getContainer( $name );
 	}
 	
 	public function init(): void
