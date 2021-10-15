@@ -67,15 +67,18 @@ final class AuthModel extends AbstractModel
 	{
 		$assert_validPassword = new Assert\IsTrue( [ 'message' => 'Неверный логин или пароль' ] );
 		
+		$assert_userFound = new Assert\IsTrue( [ 'message' => 'Пользователь не найден' ] );
+		
 		return new Assert\Collection( [
 			'login' => [],
 			'password' => [],
 			'submit' => [],
 			'_validPassword' => $assert_validPassword,
+			'_userFound' => $assert_userFound,
 		] );
 	}
 	
-	public function validator( array $input, User $user ): array
+	public function validator( array $input ): array
 	{
 		$constraint = $this -> constraint();
 		
