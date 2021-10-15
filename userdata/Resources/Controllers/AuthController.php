@@ -7,7 +7,14 @@ declare ( strict_types = 1 );
 namespace Nouvu\Resources\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-//use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\InMemoryUserProvider;
+use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
+use Symfony\Component\Security\Core\User\UserChecker;
+use Symfony\Component\Security\Core\Authentication\Token\{ UsernamePasswordToken, RememberMeToken };
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+
+use Nouvu\Web\Component\Security\Core\User\DatabaseUserProvider;
 use Nouvu\Web\Http\Controllers\AbstractController;
 use Nouvu\Web\View\Repository\CommitRepository;
 //use Nouvu\Resources\{ Entity\User, Entity\UserRegisterType, Form\UserType };
@@ -32,33 +39,72 @@ final class AuthController extends AbstractController
 		{
 			$input = $this -> getPost();
 			
+			$input['_validPassword'] = $input['_userFound'] = true;
+			
 			try
 			{
-				$userProvider = new \Nouvu\Web\Component\Security\Core\UserDatabaseUserProvider( $this -> app );
+				$userProvider = new DatabaseUserProvider( $this -> app );
 				
 				$user = $userProvider -> loadUserByIdentifier( $model -> getLogin() );
-			}
-			catch ( \Symfony\Component\Security\Core\Exception\UserNotFoundException )
-			{
-				// юзер не найден
 				
-				var_dump ( 'юзер не найден' );
+				// Login or Password not valid.
+				$input['_validPassword'] = $this -> getEncoder( $user ) 
+					-> isPasswordValid( $user -> getPassword(), $model -> getPassword(), $user -> getSalt() );
+				
+				
+				//var_dump ( $user -> getPassword(), $model -> getPassword(), $user -> getSalt() );
+			}
+			catch ( UsernameNotFoundException )
+			{
+				$input['_userFound'] = false;
 			}
 			
-			// Login or Password not valid.
-			$input['_validPassword'] = $this -> getEncoder( $user ) -> isPasswordValid( $user, $model -> getPassword() );
 			
-			$errors = $model -> validator( $input, $user );
+			
+			$errors = $model -> validator( $input );
 			
 			if ( count ( $errors ) )
 			{
 				$this -> app -> request -> attributes -> set( 'errors', $errors );
 				
-				var_dump ( 'ошибки' );
+				if ( $this -> isAjax() )
+				{
+					return $this -> customJson( $model -> getErrorsArray() );
+				}
 			}
 			else
 			{
-				var_dump ( 'ошибки' );
+				$userProvider = new InMemoryUserProvider( [
+					$user -> getUserIdentifier() => [
+						'password' => $user -> getPassword(),
+						'roles' => $user -> getRoles(),
+					]
+				] );
+				
+				$daoProvider = new DaoAuthenticationProvider(
+					$userProvider,
+					new UserChecker(),
+					'secured_area',
+					$this -> app -> container -> get( 'Encoder.factory' ) 
+				);
+				
+				$unauthenticatedToken = new RememberMeToken(
+					$user, 
+					$user -> getPassword(), 
+					'secured_area', 
+					$user -> getRoles()
+				);
+				
+				$token = $daoProvider -> authenticate( $unauthenticatedToken );
+				
+				//$event = new InteractiveLoginEvent($request, $token);
+				
+				// Symfony\Component\EventDispatcher\EventDispatcher
+				//$this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
+				
+				//return $this -> redirect( '/' );
+				
+				return $this -> customJson( [ 'success' => $token ] );
 			}
 		}
 		
