@@ -5,8 +5,9 @@ declare ( strict_types = 1 );
 namespace Nouvu\Resources\Entity;
 
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Encoder\EncoderAwareInterface;
 
-class User implements UserInterface
+class User implements UserInterface, EncoderAwareInterface
 {
 	private int | null $id = null;
 	private string | null $username = null;
@@ -100,6 +101,11 @@ class User implements UserInterface
 		// See https://en.wikipedia.org/wiki/Bcrypt
 		
 		return null;
+	}
+	
+	public function getEncoderName(): string | null
+	{
+		return \Nouvu\Resources\Entity\User :: class;
 	}
 	
 	public function eraseCredentials(): void
