@@ -144,7 +144,6 @@ return [
 		return \Symfony\Component\Form\Forms :: createFormFactoryBuilder();
 	},
 	
-	
 	/*
 		- 
 	*/
@@ -156,6 +155,19 @@ return [
 	},
 	
 // -----------------------------------------------------------------------------------------------------------------------------
+	
+	/*
+		- 
+	*/
+	'security.authentication_utils' => static function ( ContainerInterface $container ): \Symfony\Component\Security\Http\Authentication\AuthenticationUtils
+	{
+		$requestStack = new \Symfony\Component\HttpFoundation\RequestStack();
+		
+		$requestStack -> push( $container -> get( \Request :: class ) );
+		
+		return new \Symfony\Component\Security\Http\Authentication\AuthenticationUtils( $requestStack );
+	},
+	
 	/*
 		- 
 	*/
