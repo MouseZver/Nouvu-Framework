@@ -6,7 +6,7 @@
 			<label for="login">login</label>
 		</div>
 		<div>
-			<input id="login" name="login" type="text" value="{<{login}>}">
+			<input id="login" name="login" type="text" value="mousezver">
 		</div>
 	</div>
 	<div>
@@ -14,7 +14,7 @@
 			<label for="password">password</label>
 		</div>
 		<div>
-			<input id="password" name="password" type="password">
+			<input id="password" name="password" type="password" value="1234567890">
 		</div>
 	</div>
 	<div>
