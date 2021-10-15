@@ -77,6 +77,11 @@ final class Viewer
 		$commit -> reset ( 'commit', 'json' );
 	}
 	
+	public function custom( CommitRepository $commit ): void
+	{
+		$commit -> reset ( 'commit', 'custom' );
+	}
+	
 	public function terminal( CommitRepository $commit ): void
 	{
 		$commit -> set( array_filter ( $commit -> all() ) );
@@ -96,6 +101,7 @@ final class Viewer
 			'render'	=> $terminal -> contentResponse( $this -> response, new Content( $commit ) ),
 			'redirect'	=> $terminal -> redirectResponse( $this -> response ),
 			'json'		=> $terminal -> jsonResponse( $this -> response, new Content( $commit ) ),
+			'custom'	=> $terminal -> customResponse( $this -> response ),
 		};
 		
 		$this -> response -> prepare( $this -> request );
