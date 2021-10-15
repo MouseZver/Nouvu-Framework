@@ -37,8 +37,14 @@ class Terminal
 		{
 			$title = $build -> getTitle();
 			
-			// JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ??
 			return json_encode ( compact ( 'content', 'title' ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		} );
+	}
+	
+	public function customResponse( Response $response ): void
+	{
+		$closure = $this -> commit -> get( 'closure' );
+		
+		$closure( $response );
 	}
 }
