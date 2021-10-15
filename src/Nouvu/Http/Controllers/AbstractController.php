@@ -4,6 +4,7 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Http\Controllers;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -13,23 +14,25 @@ use Nouvu\Web\View\Repository\CommitRepository;
 
 class AbstractController
 {
-	private $nameModel;
-	
 	use ApplicationTrait;
 	
 	public function __construct ( protected Application $app )
 	{
-		$this -> nameModel = str_replace ( \Controller :: class, \Model :: class, static :: class );
+		$model = str_replace ( \Controller :: class, \Model :: class, static :: class );
+		
+		$this -> app -> request -> attributes -> set( '_model', $model );
 	}
 	
 	protected function getModel()
 	{
-		return $this -> make( $this -> nameModel, [ $this -> app ] );
+		return $this -> make( $this -> app -> request -> attributes -> get( '_model' ), [ $this -> app ] );
 	}
 	
 	private function getCommitInstance( array $data ): CommitRepository
 	{
-		if ( $this -> app -> container -> has( $this -> nameModel ) )
+		$name = $this -> app -> request -> attributes -> get( '_model' );
+		
+		if ( ! is_null ( $name ) && $this -> app -> container -> has( $name ) )
 		{
 			$data['model'] = $this -> getModel();
 		}
@@ -88,6 +91,20 @@ class AbstractController
 		return $commit;
 	}
 	
+	protected function customJson( array $content ): CommitRepository
+	{
+		$commit = $this -> getCommitInstance( [ 'closure' => function ( Response $response ) use ( $content ): void
+		{
+			$response -> headers -> set( 'Content-Type', 'application/json' );
+			
+			$response -> setContent( json_encode ( $content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+		} ] );
+		
+		$this -> app -> view -> custom( $commit );
+		
+		return $commit;
+	}
+	
 // -------------------------------------------- NEW
 	public function __invoke()
 	{
@@ -101,17 +118,17 @@ class AbstractController
 	
 	protected function getEncoder( UserInterface $user ): PasswordEncoderInterface
 	{
-		return $this -> app -> container -> get( 'Encoder.factory' ) -> getEncoder( $user );
+		return $this -> app -> container -> get( 'encoder.factory' ) -> getEncoder( $user );
 	}
 	
 // -------------------------------------------- NEW
 	protected function createForm( string $type, mixed $data = null, array $options = [] ): FormInterface
 	{
-		return $this -> app -> container -> get( 'Form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
+		return $this -> app -> container -> get( 'form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
 	}
 
 	protected function isGranted( /* ?????? */ $attribute, $subject = null ): bool
 	{
-		return $this -> app -> container -> get( 'Security.authorization_checker' ) -> isGranted( $attribute, $subject );
+		return $this -> app -> container -> get( 'security.authorization_checker' ) -> isGranted( $attribute, $subject );
 	}
 }
