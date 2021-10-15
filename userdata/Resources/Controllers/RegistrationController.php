@@ -30,18 +30,18 @@ final class RegistrationController extends AbstractController
 				
 				if ( $this -> isAjax() )
 				{
-					return $this -> json( 'index' );
+					return $this -> customJson( $model -> getErrorsArray() );
 				}
 			}
 			else
 			{
-				$password = $this -> getEncoder( $user ) -> encodePassword( User :: class, $user -> getPlainPassword() );
+				$password = $this -> getEncoder( $user ) -> encodePassword( $user -> getPlainPassword(), $user -> getSalt() );
 				
 				$user -> setPassword( $password );
 				
 				$this -> app -> repository -> get( 'query.database.insert.users_register' )( $user );
 				
-				return $this -> render( 'index' );
+				return $this -> redirect( '/' );
 			}
 			
 		}
