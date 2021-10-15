@@ -6,24 +6,24 @@ namespace Nouvu\Web\Component\Security\Core\User;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Nouvu\Web\Foundation\Application AS App;
 use Nouvu\Resources\Entity\User;
 
-class DatabaseUserProvider implements UserProviderInterface
+class DatabaseUserProvider// implements UserProviderInterface
 {
 	public function __construct ( private App $app )
 	{
 		
 	}
 	
-	/* public function loadUserByUsername( string $string ): User
+	public function loadUserByUsername( string $string ): User
 	{
 		return $this -> getUser( $string );
-	} */
+	}
 	
-	public function loadUserByIdentifier( ... ): User
+	public function loadUserByIdentifier( string $string ): User
 	{
 		return $this -> getUser( $string );
 	}
@@ -43,7 +43,7 @@ class DatabaseUserProvider implements UserProviderInterface
 			return $user;
 		}
 		
-		$exception = new UserNotFoundException( sprintf ( 'User \'%s\' not found in the database.', $identifier ) );
+		$exception = new UsernameNotFoundException( sprintf ( 'User \'%s\' not found in the database.', $identifier ) );
 		
 		$exception -> setUsername( $identifier );
 		
