@@ -14,6 +14,11 @@ final class RegistrationController extends AbstractController
 {
 	public function register(): CommitRepository
 	{
+		if ( $this -> isGranted( [ 'ROLE_USER' ] ) )
+		{
+			return $this -> redirect( '/' );
+		}
+		
 		$model = $this -> getModel();
 		
 		if ( $this -> app -> request -> isMethod( 'POST' ) )
