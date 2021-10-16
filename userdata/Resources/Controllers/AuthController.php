@@ -24,17 +24,10 @@ final class AuthController extends AbstractController
 {
 	public function login(): CommitRepository
 	{
-		/* $password = $this -> getEncoder( $user ) -> encodePassword( User :: class, $user -> getPlainPassword() );
-		
-		->isPasswordValid($user->getPassword(), $password ) */
-		
-		/* $requestStack = new RequestStack();
-        $requestStack->push($this->request);
-        $this->authenticationUtils = new AuthenticationUtils($requestStack); */
-		
-		$test = $this -> isGranted( [ 'ROLE_SUPER_ADMIN' ] );
-		
-		var_dump ( $test );
+		if ( $this -> isGranted( [ 'ROLE_USER' ] ) )
+		{
+			return $this -> redirect( '/' );
+		}
 		
 		$model = $this -> getModel();
 		
