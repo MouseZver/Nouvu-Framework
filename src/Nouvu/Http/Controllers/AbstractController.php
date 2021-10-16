@@ -126,6 +126,11 @@ class AbstractController
 	{
 		return $this -> app -> container -> get( 'form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
 	} */
+	
+	protected function getUser(): UserInterface
+	{
+		return $this -> app -> container -> get( 'security.token_storage' ) -> getToken() -> getUser();
+	}
 
 	protected function isGranted( /* ?????? */ $attribute, $subject = null ): bool
 	{
