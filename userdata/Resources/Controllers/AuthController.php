@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationPro
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Core\Authentication\Token\{ UsernamePasswordToken, RememberMeToken };
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\Security\Core\Security;
 
 use Nouvu\Web\Component\Security\Core\User\DatabaseUserProvider;
 use Nouvu\Web\Http\Controllers\AbstractController;
@@ -31,7 +32,9 @@ final class AuthController extends AbstractController
         $requestStack->push($this->request);
         $this->authenticationUtils = new AuthenticationUtils($requestStack); */
 		
+		$test = $this -> isGranted( [ 'ROLE_SUPER_ADMIN' ] );
 		
+		var_dump ( $test );
 		
 		$model = $this -> getModel();
 		
@@ -43,16 +46,13 @@ final class AuthController extends AbstractController
 			
 			try
 			{
-				$userProvider = new DatabaseUserProvider( $this -> app );
-				
-				$user = $userProvider -> loadUserByIdentifier( $model -> getLogin() );
+				$user = $this -> app -> container -> get( 'security.database.user_provider' ) 
+					-> loadUserByIdentifier( $model -> getLogin() );
 				
 				// Login or Password not valid.
 				$input['_validPassword'] = $this -> getEncoder( $user ) 
 					-> isPasswordValid( $user -> getPassword(), $model -> getPassword(), $user -> getSalt() );
 				
-				
-				//var_dump ( $user -> getPassword(), $model -> getPassword(), $user -> getSalt() );
 			}
 			catch ( UsernameNotFoundException )
 			{
@@ -74,37 +74,13 @@ final class AuthController extends AbstractController
 			}
 			else
 			{
-				$userProvider = new InMemoryUserProvider( [
-					$user -> getUserIdentifier() => [
-						'password' => $user -> getPassword(),
-						'roles' => $user -> getRoles(),
-					]
-				] );
+				$handler = new \Nouvu\Web\Component\Security\NouvuAuthenticationHandler( $this -> app );
 				
-				$daoProvider = new DaoAuthenticationProvider(
-					$userProvider,
-					new UserChecker(),
-					'secured_area',
-					$this -> app -> container -> get( 'Encoder.factory' ) 
-				);
+				$handler -> handle( $user, 'secured_area', 'secret_string' );
 				
-				$unauthenticatedToken = new RememberMeToken(
-					$user, 
-					$user -> getPassword(), 
-					'secured_area', 
-					$user -> getRoles()
-				);
+				//var_dump ( $_SESSION );
 				
-				$token = $daoProvider -> authenticate( $unauthenticatedToken );
-				
-				//$event = new InteractiveLoginEvent($request, $token);
-				
-				// Symfony\Component\EventDispatcher\EventDispatcher
-				//$this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
-				
-				//return $this -> redirect( '/' );
-				
-				return $this -> customJson( [ 'success' => $token ] );
+				return $this -> customJson( [ 'success' ] );
 			}
 		}
 		
@@ -113,37 +89,40 @@ final class AuthController extends AbstractController
 	
 	
 	/* {
-		
-		
-		$userProvider = new \Symfony\Component\Security\Core\User\InMemoryUserProvider( [
-			'admin' => [
-				// пароль "foo"
-				'password' => '5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg==',
-				'roles'    => ['ROLE_ADMIN'],
-			],
-		] );
-		
-		
-		$daoProvider = new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider(
-			$userProvider,
-			new \Symfony\Component\Security\Core\User\UserChecker(),
-			'secured_area',
-			$this -> app -> container -> get( 'Encoder.factory' )
-		);
-		
-		$validPassword = $encoder->isPasswordValid(
-			$user->getPassword(), // зашифрованный пароль
-			$plainPassword,       // отправленный пароль
-			$user->getSalt()
-		);
-		
-		$unauthenticatedToken = new UsernamePasswordToken(
-            $username,
-            $password,
-            $this->providerKey
-        );
-		
-		$daoProvider -> authenticate( $unauthenticatedToken );
+				$daoProvider = new DaoAuthenticationProvider(
+					$this -> app -> container -> get( 'security.database.user_provider' ),
+					new UserChecker(),
+					'secured_area',
+					$this -> app -> container -> get( 'Encoder.factory' ) 
+				);
+				
+				$token = $daoProvider -> authenticate( new UsernamePasswordToken(
+					$user, 
+					null, 
+					'secured_area', 
+					$user -> getRoles()
+				) );
+				
+				// присвоить токен в token_storage
+				$this -> app -> container -> get( 'security.token_storage' ) -> setToken( $token );
+				
+				
+				$rememberMeService = new \Nouvu\Web\Component\Security\TokenBasedRememberMeServices( 
+					[ $this -> app -> container -> get( 'security.database.user_provider' ) ], 
+					'secret_string', 
+					'secured_area', 
+					$this -> app -> repository -> get( 'security.remember_me' )
+				);
+				
+				$rememberMeService -> loginSuccess( $this -> app -> request, $this -> app -> response, $token );
+				
+				$this -> app -> session -> set( '_security_main', serialize ( $token ) );
+				
+				$this -> app -> request -> getSession() -> set( Security :: LAST_USERNAME, $user -> getUserIdentifier() );
+				
+				//$event = new InteractiveLoginEvent( $this -> app -> request, $token );
+				
+				//$this -> app -> container -> get( 'event_dispatcher' ) -> dispatch( 'security.interactive_login', $event );
 	} */
 	
 	

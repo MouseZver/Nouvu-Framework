@@ -11,24 +11,24 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Nouvu\Web\Foundation\Application AS App;
 use Nouvu\Resources\Entity\User;
 
-class DatabaseUserProvider// implements UserProviderInterface
+class DatabaseUserProvider implements UserProviderInterface
 {
 	public function __construct ( private App $app )
 	{
 		
 	}
 	
-	public function loadUserByUsername( string $string ): User
+	public function loadUserByUsername( $string )//: UserInterface
 	{
 		return $this -> getUser( $string );
 	}
 	
-	public function loadUserByIdentifier( string $string ): User
+	public function loadUserByIdentifier( $string )//: UserInterface
 	{
 		return $this -> getUser( $string );
 	}
 	
-	private function getUser( string $identifier ): User
+	private function getUser( string $identifier ): UserInterface
 	{
 		$DatabaseRequestInterface = $this -> app -> repository 
 			-> get( 'query.database.select.users_username|email' )( $identifier, $identifier );
@@ -60,7 +60,7 @@ class DatabaseUserProvider// implements UserProviderInterface
 		throw new UnsupportedUserException( sprintf ( 'Instances of \'%s\' are not supported.', $user :: class ) );
 	}
 	
-	public function supportsClass( string $class ): bool
+	public function supportsClass( $class )//: bool
 	{
 		return User :: class === $class;
 	}

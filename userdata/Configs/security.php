@@ -14,4 +14,15 @@ return [
 			User :: class => $defaultEncoder,
 		];
 	},
+	'remember_me' => [
+		'path' => '/',
+		'name' => 'MyRememberMeCookie',
+		'domain' => null,
+		'secure' => false,
+		'httponly' => true,
+		'lifetime' => 1209600, // 14 days
+		'always_remember_me' => true,
+		'remember_me_parameter' => '_remember_me'
+	],
+	'session_name' => '_security_token',
 ];

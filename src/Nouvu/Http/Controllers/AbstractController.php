@@ -122,13 +122,21 @@ class AbstractController
 	}
 	
 // -------------------------------------------- NEW
-	protected function createForm( string $type, mixed $data = null, array $options = [] ): FormInterface
+	/* protected function createForm( string $type, mixed $data = null, array $options = [] ): FormInterface
 	{
 		return $this -> app -> container -> get( 'form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
-	}
+	} */
 
 	protected function isGranted( /* ?????? */ $attribute, $subject = null ): bool
 	{
-		return $this -> app -> container -> get( 'security.authorization_checker' ) -> isGranted( $attribute, $subject );
+		try
+		{
+			return $this -> app -> security -> isGranted( $attribute, $subject );
+		}
+		catch ( \Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException )
+		{
+			return false;
+		}
+		//return $this -> app -> container -> get( 'security.authorization_checker' ) -> isGranted( $attribute, $subject );
 	}
 }

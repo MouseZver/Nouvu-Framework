@@ -49,7 +49,7 @@ return [
 	/*
 		- 
 	*/
-	\Kernel :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Http\Kernel
+	\Kernel :: class => static function ( ContainerInterface $container )
 	{
 		return new \Nouvu\Web\Http\Kernel( $container -> get( \App :: class ) );
 	},
@@ -57,7 +57,7 @@ return [
 	/*
 		- 
 	*/
-	\Request :: class => static function ( ContainerInterface $container ): \Symfony\Component\HttpFoundation\Request
+	\Request :: class => static function ( ContainerInterface $container )
 	{
 		return \Symfony\Component\HttpFoundation\Request :: createFromGlobals();
 	},
@@ -65,7 +65,7 @@ return [
 	/*
 		- 
 	*/
-	\Response :: class => static function ( ContainerInterface $container ): \Symfony\Component\HttpFoundation\Response
+	\Response :: class => static function ( ContainerInterface $container )
 	{
 		return new \Symfony\Component\HttpFoundation\Response;
 	},
@@ -73,7 +73,7 @@ return [
 	/*
 		- 
 	*/
-	\Database :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Component\Database\DatabaseManager
+	\Database :: class => static function ( ContainerInterface $container )
 	{
 		$database = new \Nouvu\Web\Component\Database\DatabaseManager( $container -> get( \App :: class ) );
 		
@@ -90,7 +90,7 @@ return [
 	/*
 		- 
 	*/
-	\Router :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Routing\Router
+	\Router :: class => static function ( ContainerInterface $container )
 	{
 		return new \Nouvu\Web\Routing\Router( $container -> get( \App :: class ) );
 	},
@@ -98,7 +98,7 @@ return [
 	/*
 		-
 	*/
-	\Session :: class => static function ( ContainerInterface $container ): \Symfony\Component\HttpFoundation\Session\Session
+	\Session :: class => static function ( ContainerInterface $container )
 	{
 		$session = new \Symfony\Component\HttpFoundation\Session\Session;
 		
@@ -112,7 +112,7 @@ return [
 	/*
 		- 
 	*/
-	\View :: class => static function ( ContainerInterface $container ): \Nouvu\Web\View\Viewer
+	\View :: class => static function ( ContainerInterface $container )
 	{
 		$app = $container -> get( \App :: class );
 		
@@ -131,23 +131,54 @@ return [
 	/*
 		- 
 	*/
-	\Validator :: class => static function ( ContainerInterface $container ): \Symfony\Component\Validator\Validator\ValidatorInterface
+	\Validator :: class => static function ( ContainerInterface $container )
 	{
 		return \Symfony\Component\Validator\Validation :: createValidator();
 	},
 	
 	/*
-		- Без getFormFactory();
+		- 
 	*/
-	'form.factory' => static function ( ContainerInterface $container ): \Symfony\Component\Form\FormFactoryBuilderInterface
+	\Security :: class => static function ( ContainerInterface $container )
 	{
-		return \Symfony\Component\Form\Forms :: createFormFactoryBuilder();
+		return new \Symfony\Component\Security\Core\Security( $container );
 	},
 	
 	/*
 		- 
 	*/
-	'encoder.factory' => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface
+	\Remember :: class => static function ( ContainerInterface $container )
+	{
+		$app = $container -> get( \App :: class );
+		
+		$remember = $app -> session -> get( $app -> repository -> get( 'security.session_name' ) );
+		
+		if ( ! is_null ( $remember ) )
+		{
+			$app -> container -> get( 'security.token_storage' ) -> setToken( unserialize ( $remember ) );
+		}
+	},
+	
+	/*
+		- Без getFormFactory();
+	*/
+	/* 'form.factory' => static function ( ContainerInterface $container )
+	{
+		return \Symfony\Component\Form\Forms :: createFormFactoryBuilder();
+	}, */
+	
+	/*
+		- 
+	*/
+	'security.database.user_provider' => static function ( ContainerInterface $container )
+	{
+		return new \Nouvu\Web\Component\Security\Core\User\DatabaseUserProvider( $container -> get( \App :: class ) );
+	},
+	
+	/*
+		- 
+	*/
+	'encoder.factory' => static function ( ContainerInterface $container )
 	{
 		$closure = $container -> get( \Repository :: class ) -> get( 'security.encoder' );
 		
@@ -157,52 +188,68 @@ return [
 // -----------------------------------------------------------------------------------------------------------------------------
 	
 	/*
-		- 
+		- event_dispatcher
 	*/
-	'security.authentication_utils' => static function ( ContainerInterface $container ): \Symfony\Component\Security\Http\Authentication\AuthenticationUtils
+	/* 'event_dispatcher' => static function ( ContainerInterface $container )
+	{
+		return new \Symfony\Component\EventDispatcher\EventDispatcher;
+	}, */
+	
+	/*
+		- token_storage
+	*/
+	'security.token_storage' => static function ( ContainerInterface $container )
+	{
+		return new \Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage(
+			new \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage,
+			$container
+		);
+	},
+	
+	/*
+		- AuthenticationUtils
+	*/
+	'security.authentication_utils' => static function ( ContainerInterface $container )
+	{
+		return new \Symfony\Component\Security\Http\Authentication\AuthenticationUtils( $container -> get( 'request_stack' ) );
+	},
+	
+	/*
+		- RequestStack
+	*/
+	'request_stack' => static function ( ContainerInterface $container )
 	{
 		$requestStack = new \Symfony\Component\HttpFoundation\RequestStack();
 		
 		$requestStack -> push( $container -> get( \Request :: class ) );
 		
-		return new \Symfony\Component\Security\Http\Authentication\AuthenticationUtils( $requestStack );
+		return $requestStack;
 	},
 	
-	/*
-		- 
-	*/
-	\Security :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Security
-	{
-		return new \Symfony\Component\Security\Core\Security( $container );
-	},
+	
 	
 	/*
 		- Symfony > security > isGranted
 	*/
-	'security.authorization_checker' => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authorization
+	'security.authorization_checker' => static function ( ContainerInterface $container )
 	{
+		$hierarchy = [
+			'ROLE_SUPER_ADMIN' => [ 'ROLE_ADMIN', 'ROLE_USER' ],
+		];
+		
+		$roleHierarchy = new \Symfony\Component\Security\Core\Role\RoleHierarchy($hierarchy);
+		
+		$roleHierarchyVoter = new \Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter($roleHierarchy);
+		
 		return new \Symfony\Component\Security\Core\Authorization\AuthorizationChecker(
-			$container -> make( \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage :: class ), 
-			
+			$container -> get( 'security.token_storage' ), 
+			new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(
+				[ $container -> get( 'security.database.user_provider' ) ]
+			),
+			new \Symfony\Component\Security\Core\Authorization\AccessDecisionManager(
+				[ $roleHierarchyVoter ],
+			)
 		);
 	},
 	
-	/*
-		- Symfony > security > getToken
-	*/
-	'security.token_storage' => static function ( ContainerInterface $container ): ContainerInterface
-	{
-		//return $container -> get( 0000000000 );
-	},
-	
-	// make
-	/* \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
-	{
-		return \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-	}, */
-	
-	/* \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager :: class => static function ( ContainerInterface $container ): \Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface
-	{
-		return \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager
-	} */
 ];

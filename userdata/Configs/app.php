@@ -22,9 +22,12 @@ return [
 		- Session :: class - Значения попадают в request
 	*/
 	'middlewareSystem' => [
-		\Session :: class,
+		\Remember :: class,
+		
+		//Session :: class,
 		//\Auth :: class,
-		\Router :: class,
+		//\Router :: class,
+		//Security :: class,
 	],
 	
 	/*
