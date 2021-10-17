@@ -35,9 +35,11 @@ class Terminal
 		
 		$build -> setContent( $response, function ( string $content ) use ( $build ): string
 		{
-			$title = $build -> getTitle();
-			
-			return json_encode ( compact ( 'content', 'title' ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+			return json_encode ( [ 
+				'response' => 'content'
+				'content' => $content, 
+				'title' => $build -> getTitle(),
+			], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		} );
 	}
 	

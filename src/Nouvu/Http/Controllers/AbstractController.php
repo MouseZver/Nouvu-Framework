@@ -5,12 +5,11 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\Http\Controllers;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Symfony\Component\Form\FormInterface;
 use Nouvu\Web\Foundation\{ Application, ApplicationTrait };
 use Nouvu\Web\View\Repository\CommitRepository;
-//use Nouvu\Web\Resources\Model\AbstractModel;
 
 class AbstractController
 {
@@ -66,6 +65,11 @@ class AbstractController
 	
 	protected function render( string $content = '', string | null $layout = null ): CommitRepository
 	{
+		if ( $this -> isAjax() )
+		{
+			return $this -> json( $content );
+		}
+		
 		$commit = $this -> getCommitInstance( compact ( 'content', 'layout' ) );
 		
 		$this -> app -> view -> render( $commit );
@@ -75,6 +79,14 @@ class AbstractController
 	
 	protected function redirect( string $path ): CommitRepository
 	{
+		if ( $this -> isAjax() )
+		{
+			return $this -> customJson( [ 
+				'response' => 'redirect',
+				'path' => $path
+			] );
+		}
+		
 		$commit = $this -> getCommitInstance( compact ( 'path' ) );
 		
 		$this -> app -> view -> redirect( $commit );
@@ -105,7 +117,6 @@ class AbstractController
 		return $commit;
 	}
 	
-// -------------------------------------------- NEW
 	public function __invoke()
 	{
 		return $this -> app -> repository -> get( 'viewer.include' );
@@ -119,29 +130,5 @@ class AbstractController
 	protected function getEncoder( UserInterface $user ): PasswordEncoderInterface
 	{
 		return $this -> app -> container -> get( 'encoder.factory' ) -> getEncoder( $user );
-	}
-	
-// -------------------------------------------- NEW
-	/* protected function createForm( string $type, mixed $data = null, array $options = [] ): FormInterface
-	{
-		return $this -> app -> container -> get( 'form.factory' ) -> getFormFactory() -> create( $type, $data, $options );
-	} */
-	
-	protected function getUser(): UserInterface
-	{
-		return $this -> app -> container -> get( 'security.token_storage' ) -> getToken() -> getUser();
-	}
-
-	protected function isGranted( /* ?????? */ $attribute, $subject = null ): bool
-	{
-		try
-		{
-			return $this -> app -> security -> isGranted( $attribute, $subject );
-		}
-		catch ( \Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException )
-		{
-			return false;
-		}
-		//return $this -> app -> container -> get( 'security.authorization_checker' ) -> isGranted( $attribute, $subject );
 	}
 }
