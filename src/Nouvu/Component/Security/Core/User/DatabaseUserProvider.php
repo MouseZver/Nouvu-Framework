@@ -8,12 +8,12 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Nouvu\Web\Foundation\Application AS App;
+use Nouvu\Web\Foundation\Application;
 use Nouvu\Resources\Entity\User;
 
 class DatabaseUserProvider implements UserProviderInterface
 {
-	public function __construct ( private App $app )
+	public function __construct ( private Application $app )
 	{
 		
 	}

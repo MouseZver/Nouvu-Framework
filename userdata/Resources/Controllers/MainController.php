@@ -11,6 +11,8 @@ final class MainController extends AbstractController
 {
 	public function index(): CommitRepository
 	{
+		var_dump ( $this -> getLastUsername() );
+		
 		$this -> title( [ 'Главная', 'Не главная' ], true );
 		
 		if ( $this -> isAjax() )
