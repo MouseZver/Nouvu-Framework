@@ -14,7 +14,8 @@ CREATE TABLE `rememberme_token` (
 
 namespace Nouvu\Web\Component\Security\Core\User;
 
-use Symfony\Component\Security\Core\Exception\TokenNotFoundException;
+use Symfony\Component\Security\Core\{ Security, Exception\TokenNotFoundException };
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Nouvu\Web\Foundation\Application;
 
 class DatabaseTokenProvider
@@ -24,35 +25,24 @@ class DatabaseTokenProvider
 		
 	}
 	
-	public function loadTokenByIdentifier( string | null $identifier ): void
+	public function loadTokenByIdentifier( string $identifier ): TokenInterface
 	{
-		if ( is_null ( $identifier ) )
-		{
-			return;
-		}
-		
-		$this -> getToken( $identifier );
+		return $this -> getToken( $identifier );
 	}
 	
-	private function getToken( string $identifier ): void
+	private function getToken( string $identifier ): TokenInterface
 	{
 		$this -> app -> repository -> get( 'query.database.delete.clearing_expired_tokens' )();
 		
 		$resource = $this -> app -> repository -> get( 'query.database.select.token' )( $identifier );
 		
-		if ( $resource -> count() )
+		$token = $resource -> get( $resource :: FETCH_COLUMN );
+		
+		if ( empty ( $token ) )
 		{
-			[ $token, $username ] = $resource -> get();
-			
-			$token = unserialize ( $token );
-			
-			$this -> app -> container -> get( 'security.token_storage' ) -> setToken( $token );
-			
-			$this -> app -> session -> set( Security :: LAST_USERNAME, $username );
+			throw new TokenNotFoundException( 'Token not found in the repository' );
 		}
-		else
-		{
-			throw new TokenNotFoundException;
-		}
+		
+		return unserialize ( $token );
 	}
 }
