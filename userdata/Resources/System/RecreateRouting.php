@@ -17,36 +17,42 @@ final class RecreateRouting
 				'controller' => [ '_controller' => [ 'Main', 'err500' ] ],
 			],
 		],
-		'TestError' => [
+		'test_error' => [
 			'route' => [
 				'path' => '/error',
 				'controller' => [ '_controller' => [ 'Main', 'testError' ] ],
 			]
 		],
-		'Welcome' => [
+		'welcome' => [
 			'route' => [
 				'path' => '/welcome',
 				'controller' => [ '_controller' => [ 'Main', 'welcome' ] ],
 			]
 		],
-		'Главная' => [
+		'index' => [
 			'route' => [
 				'path' => '/',
 				'controller' => [ '_controller' => [ 'Main', 'index' ] ],
 			]
 		],
-		'Регистрация' => [
+		'register' => [
 			'route' => [
 				'path' => '/registration',
 				'controller' => [ '_controller' => [ 'Registration', 'register' ] ],
 				'methods' => [ 'GET', 'POST' ],
 			]
 		],
-		'Авторизация' => [
+		'login' => [
 			'route' => [
 				'path' => '/login',
 				'controller' => [ '_controller' => [ 'Auth', 'login' ] ],
 				'methods' => [ 'GET', 'POST' ],
+			]
+		],
+		'logout' => [
+			'route' => [
+				'path' => '/logout',
+				'controller' => [ '_controller' => [ 'Main', 'logout' ] ],
 			]
 		],
 	];
