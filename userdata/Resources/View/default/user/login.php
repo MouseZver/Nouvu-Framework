@@ -6,7 +6,7 @@
 			<label for="login">login</label>
 		</div>
 		<div>
-			<input id="login" name="login" type="text" value="mousezver">
+			<input id="login" name="login" type="text" value="{<{login}>}">
 		</div>
 	</div>
 	<div>
@@ -14,7 +14,15 @@
 			<label for="password">password</label>
 		</div>
 		<div>
-			<input id="password" name="password" type="password" value="1234567890">
+			<input id="password" name="password" type="password">
+		</div>
+	</div>
+	<div>
+		<div>
+			<label for="remember">Запомнить меня ?</label>
+		</div>
+		<div>
+			<input id="remember" name="remember_check" type="checkbox">
 		</div>
 	</div>
 	<div>
