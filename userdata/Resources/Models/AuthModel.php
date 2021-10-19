@@ -48,21 +48,6 @@ final class AuthModel extends AbstractModel
 		return array_map ( fn( $e ) => $e -> getMessage(), $errors );
 	}
 	
-	/* public function getUser(): User
-	{
-		$user = new User;
-		
-		$user -> setUsername( $this -> getUsername() );
-		
-		$user -> setEmail( mb_strtolower ( $this -> getEmail() ) );
-		
-		$user -> setUsername( $this -> getUsername() );
-		
-		$user -> setPlainPassword( $this -> getFirstPassword() );
-		
-		return $user;
-	} */
-	
 	protected function constraint(): Assert\Collection
 	{
 		$assert_validPassword = new Assert\IsTrue( [ 'message' => 'Неверный логин или пароль' ] );
@@ -72,6 +57,7 @@ final class AuthModel extends AbstractModel
 		return new Assert\Collection( [
 			'login' => [],
 			'password' => [],
+			'remember_check' => [],
 			'submit' => [],
 			'_validPassword' => $assert_validPassword,
 			'_userFound' => $assert_userFound,
