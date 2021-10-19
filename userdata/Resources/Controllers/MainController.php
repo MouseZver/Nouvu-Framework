@@ -11,8 +11,6 @@ final class MainController extends AbstractController
 {
 	public function index(): CommitRepository
 	{
-		var_dump ( $this -> getLastUsername() );
-		
 		$this -> title( [ 'Главная', 'Не главная' ], true );
 		
 		if ( $this -> isAjax() )
@@ -21,6 +19,26 @@ final class MainController extends AbstractController
 		}
 		
 		return $this -> render( 'index' );
+	}
+	
+	public function logout(): CommitRepository
+	{
+		$storage = $this -> app -> container -> get( 'security.token_storage' );
+		
+		$cookie_name = $this -> app -> repository -> get( 'security.remember_me.name' );
+		
+		if ( $this -> app -> request -> cookies -> get( $cookie_name ) )
+		{
+			$this -> app -> repository -> get( 'query.database.delete.token' )( $storage -> getToken() );
+			
+			$this -> app -> response -> headers -> clearCookie( $cookie_name );
+		}
+		
+		$storage -> setToken( null );
+		
+		$this -> app -> request -> getSession() -> invalidate();
+		
+		return $this -> redirect( '/' );
 	}
 	
 	public function welcome( $slug = null ): CommitRepository
