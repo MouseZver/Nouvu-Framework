@@ -6,6 +6,7 @@ namespace Nouvu\Web\Foundation;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\{ Security, User\UserInterface };
 
 trait ApplicationTrait
@@ -30,9 +31,9 @@ trait ApplicationTrait
 		return $this -> app -> repository -> get( 'app.system.directory.' . $name );
 	}
 	
-	public function getLastUsername(): string | null
+	public function getLastUsername(): string
 	{
-		return $this -> app -> session -> get( Security :: LAST_USERNAME );
+		return $this -> app -> session -> get( Security :: LAST_USERNAME, '' );
 	}
 	
 	public function getUser(): UserInterface | null
@@ -48,6 +49,8 @@ trait ApplicationTrait
 		}
 		catch ( AuthenticationException )
 		{
+			//var_dump ( 'App trait isGranted AuthenticationException' );
+			
 			return false;
 		}
 	}
