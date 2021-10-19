@@ -147,29 +147,6 @@ return [
 	/*
 		- 
 	*/
-	\Remember :: class => static function ( ContainerInterface $container )
-	{
-		$app = $container -> get( \App :: class );
-		
-		$remember = $app -> session -> get( $app -> repository -> get( 'security.session_name' ) );
-		
-		if ( ! is_null ( $remember ) )
-		{
-			$app -> container -> get( 'security.token_storage' ) -> setToken( unserialize ( $remember ) );
-		}
-	},
-	
-	/*
-		- Без getFormFactory();
-	*/
-	/* 'form.factory' => static function ( ContainerInterface $container )
-	{
-		return \Symfony\Component\Form\Forms :: createFormFactoryBuilder();
-	}, */
-	
-	/*
-		- 
-	*/
 	'security.database.user_provider' => static function ( ContainerInterface $container )
 	{
 		return new \Nouvu\Web\Component\Security\Core\User\DatabaseUserProvider( $container -> get( \App :: class ) );
@@ -187,23 +164,61 @@ return [
 	
 // -----------------------------------------------------------------------------------------------------------------------------
 	
-	/*
-		- event_dispatcher
-	*/
-	/* 'event_dispatcher' => static function ( ContainerInterface $container )
-	{
-		return new \Symfony\Component\EventDispatcher\EventDispatcher;
-	}, */
 	
 	/*
 		- token_storage
 	*/
 	'security.token_storage' => static function ( ContainerInterface $container )
 	{
-		return new \Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage(
+		$cookie_name = $container -> get( 'repository' ) -> get( 'security.remember_me.name' );
+		
+		$session_name = $container -> get( 'repository' ) -> get( 'security.session_name' );
+		
+		$storage = new \Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage(
 			new \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage,
 			$container
 		);
+		
+		$remember = $container -> get( 'request' ) -> cookies -> get( $cookie_name );
+		
+		$session_token = $container -> get( 'session' ) -> get( $session_name );
+		
+		
+		if ( ! is_null ( $remember ) && is_null ( $session_token ) )
+		{
+			try
+			{
+				$provider = new \Nouvu\Web\Component\Security\Core\User\DatabaseTokenProvider( $container -> get( 'app' ) );
+				
+				$token = $provider -> loadTokenByIdentifier( $remember );
+				
+				$storage -> setToken( $token );
+				
+				$container -> get( 'session' ) -> set( $session_name, serialize ( $token ) );
+				
+				$container -> get( 'session' ) -> set( 
+					\Symfony\Component\Security\Core\Security :: LAST_USERNAME, 
+					$storage -> getToken() -> getUser() -> getUsername()
+				);
+			}
+			catch ( \Symfony\Component\Security\Core\Exception\AuthenticationException )
+			{
+				$container -> get( 'request' ) -> cookies -> remove( $cookie_name );
+			}
+		}
+		else if ( ! is_null ( $session_token ) )
+		{
+			$storage -> setToken( unserialize ( $session_token ) );
+			
+			$container -> get( 'session' ) -> set( $session_name, $session_token );
+			
+			$container -> get( 'session' ) -> set( 
+				\Symfony\Component\Security\Core\Security :: LAST_USERNAME, 
+				$storage -> getToken() -> getUser() -> getUsername()
+			);
+		}
+		
+		return $storage;
 	},
 	
 	/*
@@ -226,20 +241,16 @@ return [
 		return $requestStack;
 	},
 	
-	
-	
 	/*
 		- Symfony > security > isGranted
 	*/
 	'security.authorization_checker' => static function ( ContainerInterface $container )
 	{
-		$hierarchy = [
-			'ROLE_SUPER_ADMIN' => [ 'ROLE_ADMIN', 'ROLE_USER' ],
-		];
+		$roleHierarchy = new \Symfony\Component\Security\Core\Role\RoleHierarchy(
+			$container -> get( 'repository' ) -> get( 'security.hierarchy' )
+		);
 		
-		$roleHierarchy = new \Symfony\Component\Security\Core\Role\RoleHierarchy($hierarchy);
-		
-		$roleHierarchyVoter = new \Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter($roleHierarchy);
+		$roleHierarchyVoter = new \Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter( $roleHierarchy );
 		
 		return new \Symfony\Component\Security\Core\Authorization\AuthorizationChecker(
 			$container -> get( 'security.token_storage' ), 
