@@ -3,7 +3,7 @@
 use Nouvu\Web\Foundation\Application AS App;
 
 return [
-	'file' => 'configs/system/routing.json',
+	'file' => 'Configs/system/routing.json',
 	
 	'closure' => static function ( App $app ): array
 	{

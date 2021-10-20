@@ -110,14 +110,14 @@ return [
 			/*
 				- Удаление записи "Запомнить меня" 
 			*/
-			'token' => static function ( TokenInterface $token ) use ( $app ): void
+			'token' => static function ( string $series ) use ( $app ): void
 			{
 				$prefix_ = $app -> repository -> get( 'database.prefix' );
 				
 				$app -> database -> prepare( 
-					"DELETE FROM {$prefix_}rememberme_token WHERE `id` = ?",
+					"DELETE FROM {$prefix_}rememberme_token WHERE `series` = ?",
 					[
-						$token -> getUser() -> getId()
+						$series
 					]
 				);
 			},

@@ -27,9 +27,11 @@ final class MainController extends AbstractController
 		
 		$cookie_name = $this -> app -> repository -> get( 'security.remember_me.name' );
 		
-		if ( $this -> app -> request -> cookies -> get( $cookie_name ) )
+		$series = $this -> app -> request -> cookies -> get( $cookie_name );
+		
+		if ( ! empty ( $series ) )
 		{
-			$this -> app -> repository -> get( 'query.database.delete.token' )( $storage -> getToken() );
+			$this -> app -> repository -> get( 'query.database.delete.token' )( $series );
 			
 			$this -> app -> response -> headers -> clearCookie( $cookie_name );
 		}
