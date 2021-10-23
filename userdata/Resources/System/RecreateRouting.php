@@ -52,7 +52,7 @@ final class RecreateRouting
 		'logout' => [
 			'route' => [
 				'path' => '/logout',
-				'controller' => [ '_controller' => [ 'Main', 'logout' ] ],
+				'controller' => [ '_controller' => [ 'Auth', 'logout' ] ],
 			]
 		],
 	];

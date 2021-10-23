@@ -80,4 +80,26 @@ final class AuthController extends AbstractController
 		
 		return $this -> render( 'user/login', 'default-template' );
 	}
+	
+	public function logout(): CommitRepository
+	{
+		$storage = $this -> app -> container -> get( 'security.token_storage' );
+		
+		$cookie_name = $this -> app -> repository -> get( 'security.remember_me.name' );
+		
+		$series = $this -> app -> request -> cookies -> get( $cookie_name );
+		
+		if ( ! empty ( $series ) )
+		{
+			$this -> app -> repository -> get( 'query.database.delete.token' )( $series );
+			
+			$this -> app -> response -> headers -> clearCookie( $cookie_name );
+		}
+		
+		$storage -> setToken( null );
+		
+		$this -> app -> request -> getSession() -> invalidate();
+		
+		return $this -> redirect( '/' );
+	}
 }
