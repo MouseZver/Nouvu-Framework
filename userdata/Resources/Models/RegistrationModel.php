@@ -113,6 +113,20 @@ final class RegistrationModel extends AbstractModel
 		$assert_username_email = new Assert\IsTrue( [ 'message' => 'Ваше имя пользователя не должно быть одинаковым с эл. почтой' ] );
 		
 		
+		/* [
+			'username|Length|min:3,max:50',
+			'username|Regex|pattern:/^\w+$/ui',
+			'email|Email|message:Неверный адрес электронной почты',
+			'email|NotBlank|message:Адрес электронной почты не должен быть пустой',
+			'password.first|Length|min:10,max:100',
+			'password.second',
+			'submit',
+			'_username|IsTrue|message:Имя пользователя уже используются',
+			'_email|IsTrue|message:Адрес электронной почты уже используются',
+			'_password|IsTrue|message:Ваш пароль не совпадает с паролем для подтверждения',
+			'_username_email|IsTrue|message:Ваше имя пользователя не должно быть одинаковым с эл. почтой',
+		] */
+		
 		return new Assert\Collection( [
 			'username' => $assertUsername,
 			'email' => $assertEmail,
