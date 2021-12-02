@@ -49,7 +49,7 @@ class ShortTag implements Stringable
 			
 			foreach ( $this -> comparison AS $class )
 			{
-				if ( ! is_null ( $class ) && method_exists ( $class, $method ) )
+				if ( /* ! is_null ( $class ) &&  */method_exists ( $class, $method ) )
 				{
 					return $class -> {$method}( ...$this -> atributes( $matches[3] ?? null ) );
 				}

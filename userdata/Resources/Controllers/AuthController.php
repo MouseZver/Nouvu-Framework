@@ -1,26 +1,21 @@
 <?php
 
-//https://github.com/hwi/HWIOAuthBundle/blob/master/Tests/Controller/LoginControllerTest.php
-
 declare ( strict_types = 1 );
+
+//https://github.com/hwi/HWIOAuthBundle/blob/master/Tests/Controller/LoginControllerTest.php
 
 namespace Nouvu\Resources\Controllers;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\User\{ InMemoryUserProvider, UserChecker };
-use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
-use Symfony\Component\Security\Core\Authentication\Token\{ UsernamePasswordToken, RememberMeToken };
-use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
-use Symfony\Component\Security\Core\Security;
-
-use Nouvu\Web\Component\Security\Core\User\DatabaseUserProvider;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Nouvu\Web\Component\Validator\Exception\ViolationsException;
 use Nouvu\Web\Http\Controllers\AbstractController;
 use Nouvu\Web\View\Repository\CommitRepository;
-//use Nouvu\Resources\{ Entity\User, Entity\UserRegisterType, Form\UserType };
 
 final class AuthController extends AbstractController
 {
+	/*
+		- Авторизация
+	*/
 	public function login(): CommitRepository
 	{
 		if ( $this -> isGranted( [ 'ROLE_USER' ] ) )
@@ -28,59 +23,43 @@ final class AuthController extends AbstractController
 			return $this -> redirect( '/' );
 		}
 		
-		$model = $this -> getModel();
+		$this -> title( [ 'Авторизация' ] );
+		
+		$auth = $this -> getModel( 'auth.login' );
 		
 		if ( $this -> app -> request -> isMethod( 'POST' ) )
 		{
-			$input = $this -> getPost();
-			
-			$input['_validPassword'] = $input['_userFound'] = true;
-			
-			$input['remember_check'] = isset ( $input['remember_check'] );
-			
 			try
 			{
-				$user = $this -> app -> container -> get( 'security.database.user_provider' ) 
-					-> loadUserByIdentifier( $model -> getLogin() );
-				
-				// Login or Password not valid.
-				$input['_validPassword'] = $this -> getEncoder( $user ) 
-					-> isPasswordValid( $user -> getPassword(), $model -> getPassword(), $user -> getSalt() );
-				
-			}
-			catch ( UsernameNotFoundException )
-			{
-				$input['_userFound'] = false;
-			}
-			
-			
-			
-			$errors = $model -> validator( $input );
-			
-			if ( count ( $errors ) )
-			{
-				$this -> app -> request -> attributes -> set( 'errors', $errors );
-				
-				if ( $this -> isAjax() )
+				$user = $auth -> validation( function ( UserInterface $user ) use ( $auth ): bool
 				{
-					return $this -> customJson( $model -> getErrorsArray() );
-				}
-			}
-			else
-			{
-				$handler = new \Nouvu\Web\Component\Security\NouvuAuthenticationHandler( $this -> app );
+					return $this -> getEncoder( $user ) 
+						-> isPasswordValid( $user -> getPassword(), $auth -> getPassword(), $user -> getSalt() );
+				} );
 				
-				$handler -> handle( $user, 'secured_area', $input['remember_check'] );
+				$auth -> sendEmail( $user );
 				
-				//var_dump ( $_SESSION );
+				$auth -> authUser( $user );
 				
 				return $this -> redirect( '/' );
 			}
+			catch ( ViolationsException $e )
+			{
+				if ( $this -> isAjax() )
+				{
+					return $this -> customJson( $e -> getErrors() );
+				}
+				
+				$this -> app -> request -> attributes -> set( 'errors', $e );
+			}
 		}
 		
-		return $this -> render( 'user/login', 'default-template' );
+		return $this -> render( 'user/login', 'user/form-template' );
 	}
 	
+	/*
+		- Выход
+	*/
 	public function logout(): CommitRepository
 	{
 		$storage = $this -> app -> container -> get( 'security.token_storage' );
@@ -99,6 +78,106 @@ final class AuthController extends AbstractController
 		$storage -> setToken( null );
 		
 		$this -> app -> request -> getSession() -> invalidate();
+		
+		return $this -> redirect( '/' );
+	}
+	
+	/*
+		- Забыл пароль
+	*/
+	public function forgotPassword(): CommitRepository
+	{
+		if ( $this -> isGranted( [ 'ROLE_USER' ] ) )
+		{
+			return $this -> redirect( '/' );
+		}
+		
+		$this -> title( [ 'Восстановление пароля' ] );
+		
+		$forgot = $this -> getModel( 'auth.forgot' );
+		
+		if ( $this -> app -> request -> isMethod( 'POST' ) )
+		{
+			try
+			{
+				$user = $forgot -> validation();
+				
+				$confirm = md5 ( password_hash ( $user -> getEmail(), PASSWORD_DEFAULT ) );
+				
+				$forgot -> sendEmail( $user, $confirm );
+				
+				$forgot -> save( $user, $confirm );
+				
+				return $this -> render( 'user/forgot-password-mail', 'user/form-template' );
+			}
+			catch ( ViolationsException $e )
+			{
+				if ( $this -> isAjax() )
+				{
+					return $this -> customJson( $e -> getErrors() );
+				}
+				
+				$this -> app -> request -> attributes -> set( 'errors', $e );
+			}
+		}
+		
+		return $this -> render( 'user/forgot-password', 'user/form-template' );
+	}
+	
+	/*
+		- Новый пароль
+	*/
+	public function lostPassword(): CommitRepository
+	{
+		if ( $this -> isGranted( [ 'ROLE_USER' ] ) )
+		{
+			return $this -> redirect( '/' );
+		}
+		
+		$this -> title( [ 'Сброс пароля' ] );
+		
+		$lost = $this -> getModel( 'auth.lost' );
+		
+		if ( ! empty ( $lost -> getConfirm() ) )
+		{
+			$confirm = $lost -> getDataConfirm();
+			
+			if ( ! $confirm -> has( 'id' ) )
+			{
+				return $this -> redirect( '/' );
+			}
+			
+			try
+			{
+				$user = $lost -> validation( function ( UserInterface $user ) use ( $lost ): void
+				{
+					$password = $this -> getEncoder( $user ) -> encodePassword( $lost -> getFirstPassword(), $user -> getSalt() );
+					
+					$user -> setPassword( $password );
+				}, 
+				$confirm );
+				
+				if ( $user instanceof UserInterface )
+				{
+					$lost -> sendEmail( $user );
+					
+					$lost -> updateUser( $user );
+					
+					return $this -> render( 'user/lost-password-success', 'user/form-template' );
+				}
+			}
+			catch ( ViolationsException $e )
+			{
+				if ( $this -> isAjax() )
+				{
+					return $this -> customJson( $e -> getErrors() );
+				}
+				
+				$this -> app -> request -> attributes -> set( 'errors', $e );
+			}
+			
+			return $this -> render( 'user/lost-password', 'user/form-template' );
+		}
 		
 		return $this -> redirect( '/' );
 	}

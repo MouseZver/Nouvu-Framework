@@ -36,12 +36,14 @@ class DatabaseTokenProvider
 		
 		$resource = $this -> app -> repository -> get( 'query.database.select.token' )( $identifier );
 		
-		$token = $resource -> get( $resource :: FETCH_COLUMN );
-		
-		if ( empty ( $token ) )
+		if ( empty ( $resource -> count() ) )
 		{
 			throw new TokenNotFoundException( 'Token not found in the repository' );
 		}
+		
+		[ 'id' => $id, 'value' => $token ] = $resource -> get( $resource :: FETCH_ASSOC );
+		
+		$this -> app -> repository -> get( 'query.database.update.token_lastUsed' )( $id );
 		
 		return unserialize ( $token );
 	}

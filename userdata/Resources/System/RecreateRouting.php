@@ -42,6 +42,13 @@ final class RecreateRouting
 				'methods' => [ 'GET', 'POST' ],
 			]
 		],
+		'account-activation' => [
+			'route' => [
+				'path' => '/confirm-account',
+				'controller' => [ '_controller' => [ 'Registration', 'confirm' ] ],
+				'methods' => [ 'GET' ],
+			]
+		],
 		'login' => [
 			'route' => [
 				'path' => '/login',
@@ -55,10 +62,25 @@ final class RecreateRouting
 				'controller' => [ '_controller' => [ 'Auth', 'logout' ] ],
 			]
 		],
+		'forgot-password' => [
+			'route' => [
+				'path' => '/forgot-password',
+				'controller' => [ '_controller' => [ 'Auth', 'forgotPassword' ] ],
+				'methods' => [ 'GET', 'POST' ],
+			]
+		],
+		'lost-password' => [
+			'route' => [
+				'path' => '/lost-password',
+				'controller' => [ '_controller' => [ 'Auth', 'lostPassword' ] ],
+				'methods' => [ 'GET', 'POST' ],
+			]
+		],
 	];
 	
 	private static array $template = [
 		'edit' => true,
+		'active' => true,
 		'route' => [
 			'path' => '/error/404',
 			'controller' => [ '_controller' => [ 'Main', 'err404' ] ],

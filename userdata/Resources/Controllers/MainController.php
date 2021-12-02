@@ -21,6 +21,7 @@ final class MainController extends AbstractController
 		$this -> title( [ 'Welcome' ] );
 		
 		return $this -> render( 'welcome' );
+		//return $this -> render( 'test/login/login', 'test/login/template' );
 	}
 	
 	public function err404(): CommitRepository

@@ -22,28 +22,25 @@ return [
 	/*
 		- 
 	*/
-	\Repository :: class => static function ( ContainerInterface $container ): \Nouvu\Web\Component\Config\Repository
+	\Repository :: class => static function ( ContainerInterface $container )
 	{
-		$config = [];
+		// use in each config
+		$app = $container -> get( 'app' );
 		
-		// use to each config
-		$app = $container -> get( \App :: class );
+		$repository = new \Nouvu\Web\Component\Config\Repository( [], '.' );
 		
 		foreach ( glob ( dirname ( __FILE__ ) . '/Configs/*.php' ) AS $file )
 		{
-			$config[basename ( $file, '.php' )] = include $file;
+			$repository -> reset( basename ( $file, '.php' ), include $file );
 		}
 		
-		$config['app']['system']['directory'] = [
+		$repository -> reset( 'app.system.directory', [
 			'userdata' => dirname ( __FILE__ ) . DIRECTORY_SEPARATOR,
 			'root' => dirname ( __DIR__ ) . DIRECTORY_SEPARATOR,
-		];
+			'view' => dirname ( __FILE__ ) . DIRECTORY_SEPARATOR . 'Resources/View/'
+		] );
 		
-		$userdata = $config['app']['system']['directory']['userdata'];
-		
-		$config['app']['system']['directory']['view'] = $userdata . 'Resources/View/';
-		
-		return new \Nouvu\Web\Component\Config\Repository( $config, '.' );
+		return $repository;
 	},
 	
 	/*
@@ -51,7 +48,7 @@ return [
 	*/
 	\Kernel :: class => static function ( ContainerInterface $container )
 	{
-		return new \Nouvu\Web\Http\Kernel( $container -> get( \App :: class ) );
+		return new \Nouvu\Web\Http\Kernel( $container -> get( 'app' ) );
 	},
 	
 	/*
@@ -75,13 +72,15 @@ return [
 	*/
 	\Database :: class => static function ( ContainerInterface $container )
 	{
-		$database = new \Nouvu\Web\Component\Database\DatabaseManager( $container -> get( \App :: class ) );
+		$database = new \Nouvu\Web\Component\Database\DatabaseManager( $container -> get( 'app' ) );
 		
-		$zone = $container -> get( \Repository :: class ) -> get( 'timezone.database' );
+		$zone = $container -> get( 'repository' ) -> get( 'timezone.database' );
 		
 		if ( ! empty ( $zone ) )
 		{
-			$database -> query( [ 'SET time_zone = "%s"', $zone ] );
+			//$database -> query( [ 'SET time_zone = "%s"', $zone ] );
+			
+			$database -> query( [ 'SET session time_zone = "%s"', $zone ] );
 		}
 		
 		return $database;
@@ -92,7 +91,7 @@ return [
 	*/
 	\Router :: class => static function ( ContainerInterface $container )
 	{
-		return new \Nouvu\Web\Routing\Router( $container -> get( \App :: class ) );
+		return new \Nouvu\Web\Routing\Router( $container -> get( 'app' ) );
 	},
 	
 	/*
@@ -104,7 +103,7 @@ return [
 		
 		$session -> start();
 		
-		$container -> get( \Request :: class ) -> setSession( $session );
+		$container -> get( 'request' ) -> setSession( $session );
 		
 		return $session;
 	},
@@ -114,7 +113,7 @@ return [
 	*/
 	\View :: class => static function ( ContainerInterface $container )
 	{
-		$app = $container -> get( \App :: class );
+		$app = $container -> get( 'app' );
 		
 		$repository = $app -> repository;
 		
@@ -133,7 +132,39 @@ return [
 	*/
 	\Validator :: class => static function ( ContainerInterface $container )
 	{
-		return \Symfony\Component\Validator\Validation :: createValidator();
+		$validation = \Symfony\Component\Validator\Validation :: createValidator();
+		
+		return new \Nouvu\Web\Component\Validator\Validation( $container -> get( 'request' ), $validation );
+	},
+	
+	/*
+		- 
+	*/
+	\Mail :: class => static function ( ContainerInterface $container )
+	{
+		return new \Nouvu\Resources\System\MailerFacade( $container -> get( 'app' ) );
+	},
+	
+	/*
+		- 
+	*/
+	'encoder.factory' => static function ( ContainerInterface $container )
+	{
+		$closure = $container -> get( 'repository' ) -> get( 'security.encoder' );
+		
+		return new \Symfony\Component\Security\Core\Encoder\EncoderFactory( $closure() );
+	},
+	
+	/*
+		- RequestStack
+	*/
+	'request_stack' => static function ( ContainerInterface $container )
+	{
+		$requestStack = new \Symfony\Component\HttpFoundation\RequestStack();
+		
+		$requestStack -> push( $container -> get( 'request' ) );
+		
+		return $requestStack;
 	},
 	
 	/*
@@ -149,21 +180,8 @@ return [
 	*/
 	'security.database.user_provider' => static function ( ContainerInterface $container )
 	{
-		return new \Nouvu\Web\Component\Security\Core\User\DatabaseUserProvider( $container -> get( \App :: class ) );
+		return new \Nouvu\Web\Component\Security\Core\User\DatabaseUserProvider( $container -> get( 'app' ) );
 	},
-	
-	/*
-		- 
-	*/
-	'encoder.factory' => static function ( ContainerInterface $container )
-	{
-		$closure = $container -> get( \Repository :: class ) -> get( 'security.encoder' );
-		
-		return new \Symfony\Component\Security\Core\Encoder\EncoderFactory( $closure() );
-	},
-	
-// -----------------------------------------------------------------------------------------------------------------------------
-	
 	
 	/*
 		- token_storage
@@ -230,15 +248,43 @@ return [
 	},
 	
 	/*
-		- RequestStack
+		- 
 	*/
-	'request_stack' => static function ( ContainerInterface $container )
+	'security.role_hierarchy' => static function ( ContainerInterface $container )
 	{
-		$requestStack = new \Symfony\Component\HttpFoundation\RequestStack();
-		
-		$requestStack -> push( $container -> get( \Request :: class ) );
-		
-		return $requestStack;
+		return new \Symfony\Component\Security\Core\Role\RoleHierarchy(
+			$container -> get( 'repository' ) -> get( 'security.hierarchy' )
+		);
+	},
+	
+	/*
+		- 
+	*/
+	'security.role_hierarchy_voter' => static function ( ContainerInterface $container )
+	{
+		return new \Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter( 
+			$container -> get( 'security.role_hierarchy' )
+		);
+	},
+	
+	/*
+		- 
+	*/
+	'security.authentication_provider' => static function ( ContainerInterface $container )
+	{
+		return new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(
+			[ $container -> get( 'security.database.user_provider' ) ]
+		);
+	},
+	
+	/*
+		- 
+	*/
+	'security.access_decision' => static function ( ContainerInterface $container )
+	{
+		return new \Symfony\Component\Security\Core\Authorization\AccessDecisionManager(
+			[ $container -> get( 'security.role_hierarchy_voter' ) ],
+		);
 	},
 	
 	/*
@@ -246,20 +292,10 @@ return [
 	*/
 	'security.authorization_checker' => static function ( ContainerInterface $container )
 	{
-		$roleHierarchy = new \Symfony\Component\Security\Core\Role\RoleHierarchy(
-			$container -> get( 'repository' ) -> get( 'security.hierarchy' )
-		);
-		
-		$roleHierarchyVoter = new \Symfony\Component\Security\Core\Authorization\Voter\RoleHierarchyVoter( $roleHierarchy );
-		
 		return new \Symfony\Component\Security\Core\Authorization\AuthorizationChecker(
 			$container -> get( 'security.token_storage' ), 
-			new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(
-				[ $container -> get( 'security.database.user_provider' ) ]
-			),
-			new \Symfony\Component\Security\Core\Authorization\AccessDecisionManager(
-				[ $roleHierarchyVoter ],
-			)
+			$container -> get( 'security.authentication_provider' ),
+			$container -> get( 'security.access_decision' ),
 		);
 	},
 	

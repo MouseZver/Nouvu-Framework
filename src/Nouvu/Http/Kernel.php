@@ -25,7 +25,7 @@ class Kernel
 		
 		foreach ( $app -> repository -> get( 'app.middlewareSystem' ) AS $name )
 		{
-			$app -> {$name};/*  = fn(): $class => new $class( $app ); */
+			$app -> container -> get( $name );
 		}
 	}
 	

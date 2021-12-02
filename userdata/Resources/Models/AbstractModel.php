@@ -5,6 +5,7 @@ declare ( strict_types = 1 );
 namespace Nouvu\Resources\Models;
 
 use Nouvu\Web\Foundation\Application AS App;
+use Nouvu\Web\Component\Validator\Exception\ViolationsException;
 
 class AbstractModel //implements ???...
 {
@@ -13,28 +14,23 @@ class AbstractModel //implements ???...
 		
 	}
 	
-	// getPage -> getRoute
 	public function getRoute(): string
 	{
 		return $this -> app -> request -> attributes -> get( '_route' );
 	}
 	
-	// to controller
-	/* public function __invoke()
+	public function getErrors(): string
 	{
-		return $this -> app -> repository -> get( 'viewer.include' );
+		$errors = $this -> app -> request -> attributes -> get( 'errors' );
+		
+		if ( $errors instanceof ViolationsException )
+		{
+			return implode ( PHP_EOL, array_map ( 
+				fn( $message ) => "<p style=\"background-color: #ff959580;padding: 10px;font-size: 9pt;border-radius: 10px;\">{$message}</p>", 
+				$errors -> getErrors() 
+			) );
+		}
+		
+		return '';
 	}
-	
-	// to controller
-	public function getLocale(): string
-	{
-		return $this -> app -> getLocale();
-	}
-	
-	// to abstract model
-	// getRoute ?
-	public function getPage(): string
-	{
-		return $this -> app -> request -> attributes -> get( '_route' );
-	} */
 }

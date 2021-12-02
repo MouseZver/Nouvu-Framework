@@ -17,23 +17,29 @@ class AbstractController
 	
 	public function __construct ( protected Application $app )
 	{
-		$model = str_replace ( \Controller :: class, \Model :: class, static :: class );
+		/* $model = str_replace ( \Controller :: class, \Model :: class, static :: class );
 		
-		$this -> app -> request -> attributes -> set( '_model', $model );
+		$this -> app -> request -> attributes -> set( '_model', $model ); */
 	}
 	
-	protected function getModel()
+	protected function getModel( string $string )
 	{
-		return $this -> make( $this -> app -> request -> attributes -> get( '_model' ), [ $this -> app ] );
+		$transformedSegments = array_map ( fn( string $a ) => ucfirst ( strtolower ( $a ) ), explode ( '.', $string ) );
+		
+		$name = sprintf ( 'Nouvu\\Resources\\Models\\%sModel', implode ( '\\', $transformedSegments ) );
+		
+		$this -> app -> repository -> add( 'app.system.listModels', [ $name ] );
+		
+		return $this -> make( $name, [ $this -> app ] );
+		
+		//return $this -> make( $this -> app -> request -> attributes -> get( '_model.' . $name ), [ $this -> app ] );
 	}
 	
 	private function getCommitInstance( array $data ): CommitRepository
 	{
-		$name = $this -> app -> request -> attributes -> get( '_model' );
-		
-		if ( ! is_null ( $name ) && $this -> app -> container -> has( $name ) )
+		foreach ( array_unique ( $this -> app -> repository -> get( 'app.system.listModels', [] ) ) AS $name )
 		{
-			$data['model'] = $this -> getModel();
+			$data['models'][] = $this -> app -> container -> get( $name );
 		}
 		
 		$data['controller'] = $this;

@@ -7,6 +7,7 @@ namespace Nouvu\Web\View\Builder;
 use Symfony\Component\HttpFoundation\Response;
 use Nouvu\Web\View\Repository\CommitRepository;
 use Nouvu\Web\View\Builder\ShortTag;
+use Stringable;
 
 class Content
 {
@@ -17,10 +18,14 @@ class Content
 		// $this -> commit -> reset( 'content', '' );
 	}
 	
-	protected function replaceCode( string $template, string $content ): string
+	protected function replaceCode( string $template, string $content ): Stringable
 	{
-		return ( string ) new ShortTag( 
-			[ $this, $this -> commit -> get( 'controller' ), $this -> commit -> get( 'model' ) ], 
+		return new ShortTag( 
+			[ 
+				$this, 
+				$this -> commit -> get( 'controller' ), 
+				...$this -> commit -> get( 'models', [] ) 
+			], 
 			function ( array $matches ) use ( $template ): string
 			{
 				$file = dirname ( $template ) . DIRECTORY_SEPARATOR . $matches[1];
@@ -32,7 +37,8 @@ class Content
 				
 				return "<!-- Not found ({$matches[1]}) -->";
 			}, 
-		$content );
+			$content 
+		);
 	}
 	
 	public function setContent( Response $response, callable | null $call = null ): void
@@ -62,7 +68,7 @@ class Content
 		return $this -> commit -> get( 'title' ) -> getResult();
 	}
 	
-	public function getHead( string ...$heads )
+	public function getHead( string ...$heads ): string
 	{
 		if ( func_num_args () > 0 )
 		{
@@ -80,7 +86,7 @@ class Content
 		
 		$closure( $name );
 		
-		return $this -> replaceCode( $name, ob_get_clean () );
+		return ( string ) $this -> replaceCode( $name, ob_get_clean () );
 	}
 	
 	

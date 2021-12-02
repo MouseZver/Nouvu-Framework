@@ -4,9 +4,8 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Web\Foundation;
 
-use Psr\Container\ContainerInterface;
+//use Psr\Container\ContainerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\{ Security, User\UserInterface };
 
 trait ApplicationTrait
@@ -49,9 +48,12 @@ trait ApplicationTrait
 		}
 		catch ( AuthenticationException )
 		{
-			//var_dump ( 'App trait isGranted AuthenticationException' );
-			
 			return false;
 		}
+	}
+	
+	public function addFilemtime( string $file ): string
+	{
+		return $this -> app -> repository -> get( 'app.addFilemtime' )( $file );
 	}
 }

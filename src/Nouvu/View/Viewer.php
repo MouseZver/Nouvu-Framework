@@ -82,14 +82,24 @@ final class Viewer
 		$commit -> reset ( 'commit', 'custom' );
 	}
 	
-	public function terminal( CommitRepository $commit ): void
+	public function filter( CommitRepository $commit ): void
 	{
 		$commit -> set( array_filter ( $commit -> all() ) );
-		
+	}
+	
+	public function filling( CommitRepository $commit ): void
+	{
 		foreach ( [ 'directory', 'layout', 'head', 'title', 'extension' ] AS $name )
 		{
 			$commit -> reset ( $name, $this -> {$name} );
 		}
+	}
+	
+	public function terminal( CommitRepository $commit ): void
+	{
+		$this -> filter( $commit );
+		
+		$this -> filling( $commit );
 		
 		$this -> send( $commit, new Terminal( $commit ) );
 	}

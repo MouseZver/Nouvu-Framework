@@ -15,13 +15,14 @@
 	"require": {
 		"php": "^8.0",
 		"psr/container": "^1.1",
-		"nouvu/config": "^v4.0",
-		"nouvu/container": "^2.0",
+		"nouvu/config": "^4.1",
+		"nouvu/container": "^2.1",
 		"nouvu/lerma": "^7.0",
 		"symfony/http-foundation": "^5.3",
         "symfony/routing": "^5.3",
 		"symfony/validator": "^5.3",
-		"symfony/security": "^4.4"
+		"symfony/security": "^4.4",
+        "phpmailer/phpmailer": "^6.5"
 	},
     "autoload": {
          "psr-4": {

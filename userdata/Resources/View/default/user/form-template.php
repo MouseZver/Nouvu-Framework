@@ -2,10 +2,9 @@
 <html lang="{<{locale}>}">
 <head>
 	<title>{<{title}>}</title>
-	{<{head=meta-charset|meta-viewport|js-jquery|js-popper|js-bootstrap|js-pace|css-pace|css-bootstrap|css-icons|css-app}>}
+	{<{head=meta-charset|meta-viewport|js-jquery|js-nouvu|js-pace|css-pace|css-bootstrap|css-icons|css-app}>}
 </head>
 <body class="bg-theme bg-theme1">
-<!-- wrapper -->
 <div class="wrapper">
 	<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top border-bottom">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">	<span class="navbar-toggler-icon"></span>
@@ -18,8 +17,8 @@
 			</ul>
 		</div>
 	</nav>
-	{<{content}>}
+{<{content}>}
+
 </div>
-<!-- end wrapper -->
 </body>
 </html>

@@ -17,13 +17,33 @@ return [
 	],
 	
 	/*
+		- Почта
+	*/
+	'mailer' => [
+		'debug' => false,
+		'smtp' => true,
+		'html' => true,
+		'from' => [ 'noreply@nouvu.com', 'Nouvu' ],
+		'host' => [
+			'Host'			=> 'smtp.gmail.com',
+			'SMTPAuth'		=> true,
+			'Username'		=> 'Username',
+			'Password'		=> 'Password',
+			'SMTPSecure'	=> \PHPMailer\PHPMailer\PHPMailer :: ENCRYPTION_STARTTLS,
+			'Port'			=> 587,
+			'CharSet'		=> \PHPMailer\PHPMailer\PHPMailer :: CHARSET_UTF8,
+			'Encoding'		=> \PHPMailer\PHPMailer\PHPMailer :: ENCODING_BASE64,
+		],
+	],
+	
+	/*
 		- Настройка Часового пояса. Список поддерживаемых временных зон:
 		- https://www.php.net/manual/ru/timezones.php
 		- Для использования default зоны, следует установить значение false
 	*/
 	'timezone' => [
 		'host' => 'Europe/Moscow',
-		'database' => 'Europe/Moscow',
+		'database' => '+03:00',
 	],
 	
 	/*

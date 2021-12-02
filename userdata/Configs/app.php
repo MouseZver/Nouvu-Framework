@@ -19,15 +19,29 @@ return [
 	],
 	
 	/*
-		- Session :: class - Значения попадают в request
+		- Немедленная загрузка инструмента из списка tools.php
 	*/
 	'middlewareSystem' => [
-		\Session :: class,
+		//'security.token_storage', // Немедленная идентификация пользователя
 	],
 	
 	/*
 		- Данный атрибут используется системой
 	*/
 	'system' => [],
+	
+	/*
+		- Вставка метки времени по последнему изменению файла
+		- example: /assets/css/app.css?11111111
+	*/
+	'addFilemtime' => static function ( string $file ) use ( $app ): string
+	{
+		if ( $app -> repository -> has( 'app.system.directory.site' ) && file_exists ( $app -> repository -> get( 'app.system.directory.site' ) . $file ) )
+		{
+			$file .= '?' . filemtime ( $app -> repository -> get( 'app.system.directory.site' ) . $file );
+		}
+		
+		return $file;
+	},
 ];
 

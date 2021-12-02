@@ -15,6 +15,7 @@ class User implements UserInterface, EncoderAwareInterface
 	private string | null $password = null;
 	private string | null $plainPassword = null;
 	private array $roles = [];
+	private bool $confirmed = false;
 	private string | null $create_at = null;
 	
 	public function getId(): int | null
@@ -92,6 +93,16 @@ class User implements UserInterface, EncoderAwareInterface
 	public function setRoles( array $roles ): void
 	{
 		$this -> roles = $roles;
+	}
+	
+	public function getConfirmed(): bool
+	{
+		return $this -> confirmed;
+	}
+	
+	public function setConfirmed( bool $confirmed ): void
+	{
+		$this -> confirmed = $confirmed;
 	}
 	
 	public function getSalt(): string | null
