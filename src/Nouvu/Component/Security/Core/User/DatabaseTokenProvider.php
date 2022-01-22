@@ -32,9 +32,9 @@ class DatabaseTokenProvider
 	
 	private function getToken( string $identifier ): TokenInterface
 	{
-		$this -> app -> repository -> get( 'query.database.delete.clearing_expired_tokens' )();
+		$this -> app -> repository -> get( 'query.database.delete.rememberme_token@clearing-expired-tokens' )();
 		
-		$resource = $this -> app -> repository -> get( 'query.database.select.token' )( $identifier );
+		$resource = $this -> app -> repository -> get( 'query.database.select.rememberme_token@by_series' )( $identifier );
 		
 		if ( empty ( $resource -> count() ) )
 		{
@@ -43,7 +43,7 @@ class DatabaseTokenProvider
 		
 		[ 'id' => $id, 'value' => $token ] = $resource -> get( $resource :: FETCH_ASSOC );
 		
-		$this -> app -> repository -> get( 'query.database.update.token_lastUsed' )( $id );
+		$this -> app -> repository -> get( 'query.database.update.rememberme_token@update-lastUsed_by_id' )( $id );
 		
 		return unserialize ( $token );
 	}

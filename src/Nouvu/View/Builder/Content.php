@@ -15,7 +15,7 @@ class Content
 	
 	public function __construct ( private CommitRepository $commit )
 	{
-		// $this -> commit -> reset( 'content', '' );
+		// $this -> commit -> set( 'content', '' );
 	}
 	
 	protected function replaceCode( string $template, string $content ): Stringable
@@ -35,7 +35,10 @@ class Content
 					return $this -> getHtml( $file );
 				}
 				
-				return "<!-- Not found ({$matches[1]}) -->";
+				throw new \InvalidArgumentException( sprintf ( 'Not loading template-tag {%s}, template: {%s}', 
+					$matches[1], 
+					str_replace ( $this -> commit -> get( 'directory' ), '', $template ),
+				) );
 			}, 
 			$content 
 		);
@@ -43,9 +46,14 @@ class Content
 	
 	public function setContent( Response $response, callable | null $call = null ): void
 	{
-		foreach ( array_filter ( $this -> commit -> getContainer() ) AS $name )
+		foreach ( array_filter ( $this -> commit -> getContainer() ) AS $key => $name )
 		{
 			$this -> content = $this -> getHtml( $this -> commit -> get( 'directory' ) . $name );
+			
+			if ( $key == 'content' )
+			{
+				$this -> content = strtr ( $this -> content, $this -> commit -> getArguments() );
+			}
 		}
 		
 		if ( is_callable ( $call ) )
@@ -75,7 +83,16 @@ class Content
 			$this -> commit -> get( 'head' ) -> add( 'selected', func_get_args (), true );
 		}
 		
-		return implode ( PHP_EOL . "\t", iterator_to_array ( $this -> commit -> get( 'head' ) -> getResult() ) );
+		$head = implode ( PHP_EOL . "\t", iterator_to_array ( $this -> commit -> get( 'head' ) -> getResult() ) );
+		
+		$this -> commit -> get( 'head' ) -> set( 'selected', [] );
+		
+		return $head;
+	}
+	
+	public function getInclude( string $name ): string
+	{
+		return $this -> getHtml( $this -> commit -> get( 'directory' ) . $name );
 	}
 	
 	public function getHtml( string $name ): string

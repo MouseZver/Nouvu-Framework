@@ -29,7 +29,7 @@ class Validation
 		
 		foreach ( $this -> iteratorWorkKeys( $this -> getInput( $method ) ) AS $key => $val )
 		{
-			$input -> reset( $key, $val );
+			$input -> set( $key, $val );
 		}
 		
 		$groups = new Assert\GroupSequence( [ 'Default', 'custom' ] );
@@ -111,34 +111,34 @@ class Validation
 		}
 	}
 	
+	protected function getArrayAttributes( string | array $segment ): array
+	{
+		if ( is_string ( $segment ) )
+		{
+			$values = [];
+			
+			foreach ( explode ( ',', $segment ) AS $attributes )
+			{
+				[ $key, $val ] = explode ( ':', $attributes );
+				
+				$values[$key] = $val;
+			}
+			
+			return $values;
+		}
+		
+		return $segment;
+	}
+	
 	protected function parseAttributes( array $segments ): void
 	{
 		if ( isset ( $segments[1] ) )
 		{
-			$values = [];
-			
-			if ( isset ( $segments[2] ) )
-			{
-				if ( is_array ( $segments[2] ) )
-				{
-					$values = $segments[2];
-				}
-				else if ( is_string ( $segments[2] ) )
-				{
-					foreach ( explode ( ',', $segments[2] ) AS $attributes )
-					{
-						[ $key, $val ] = explode ( ':', $attributes );
-						
-						$values[$key] = $val;
-					}
-				}
-				else
-				{
-					throw new \InvalidArgumentException( 'Invalid type parse in argument 2: ' . gettype ( $segments[2] ) );
-				}
-			}
-			
-			$this -> recursive[] = [ 'assert' => Assert :: class . '\\' . $segments[1], 'values' => $values ];
+			$this -> recursive[] = [ 
+				'assert' => Assert :: class . '\\' . $segments[1], 
+				
+				'values' => ( isset ( $segments[2] ) ? $this -> getArrayAttributes( $segments[2] ) : [] )
+			];
 		}
 	}
 	
@@ -164,7 +164,7 @@ class Validation
 		return $map;
 	}
 	
-	protected function loadMapRecursive( array &$segment )
+	protected function loadMapRecursive( array &$segment ): void
 	{
 		foreach ( $segment AS &$recursion )
 		{

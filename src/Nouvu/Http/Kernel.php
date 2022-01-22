@@ -13,6 +13,7 @@ use Nouvu\Web\Routing\RequestContext AS NouvuContext;
 use Nouvu\Web\Routing\UrlMatcher AS NouvuMatcher;
 use Nouvu\Web\Routing\{ CollectionTrait, ContextTrait };
 use Nouvu\Web\View\Repository\CommitRepository;
+use Nouvu\Web\View\Builder\Content;
 use Nouvu\Resources\Controllers;
 
 class Kernel
@@ -74,7 +75,7 @@ class Kernel
 	
 	public function terminal( CommitRepository $commit ): void
 	{
-		$this -> app -> view -> terminal( $commit );
+		$this -> app -> view -> terminal( $commit, $this -> app -> make( Content :: class, [ $commit ] ) );
 	}
 	
 	public function handle( NouvuMatcher $NouvuMatcher ): CommitRepository
@@ -97,12 +98,6 @@ class Kernel
 		}
 		catch ( \Throwable $e )
 		{
-			/* error_log ( $e -> getMessage() );
-			
-			error_log ( 'File: ' . $e -> getFile() );
-			
-			error_log ( 'Line: ' . $e -> getLine() ); */
-			
 			if ( $this -> app -> repository -> get( 'config.debug.display' ) )
 			{
 				throw $e;

@@ -12,15 +12,15 @@ class InputController extends Repository
 	{
 		parent :: __construct ();
 		
-		$this -> reset ( 'name', $params['_route'] );
+		$this -> set ( 'name', $params['_route'] );
 		
-		$this -> reset ( 'controller', $params['_controller'][0] );
+		$this -> set ( 'controller', $params['_controller'][0] );
 		
-		$this -> reset ( 'action', $params['_controller'][1] );
+		$this -> set ( 'action', $params['_controller'][1] );
 		
-		unset ( $params['_route'], $params['_controller'] );
+		//unset ( $params['_route'], $params['_controller'] );
 		
-		$this -> reset ( 'arguments', $params );
+		$this -> set ( 'arguments', $params );
 	}
 	
 	public function getRouteName(): string
@@ -40,6 +40,6 @@ class InputController extends Repository
 	
 	public function getArguments(): array
 	{
-		return $this -> get( 'arguments' );
+		return json_decode ( json_encode ( $this -> get( 'arguments' ), JSON_NUMERIC_CHECK ), true );
 	}
 }

@@ -15,22 +15,22 @@ class Repository
 		$this -> config = new Config( $data, '.' );
 	}
 	
-	public function set( array $data ): void
+	public function set( string | int | null $offset, mixed $data ): void
 	{
-		$this -> config -> set( callable: fn( &$a ) => $a = $data );
+		$this -> config -> set( $offset, fn( &$a ) => $a = $data );
 	}
 	
-	public function get( string $offset, mixed $default = null ): mixed
+	public function get( string | int $offset, mixed $default = null ): mixed
 	{
 		return $this -> config -> get( $offset, $default );
 	}
 	
-	public function has( string $offset ): bool
+	public function has( string | int $offset ): bool
 	{
 		return $this -> config -> has( $offset );
 	}
 	
-	public function add( string $offset, array $data, bool $before = false ): void
+	public function add( string | int | null $offset, array $data, bool $before = false ): void
 	{
 		$this -> config -> set( $offset, function ( &$a ) use ( $before, $data ): void
 		{
@@ -40,18 +40,25 @@ class Repository
 		} );
 	}
 	
-	public function delete( string $offset ): void
+	public function remove( string $offset ): void
 	{
-		$this -> config -> set( $offset, fn( &$a ) => $a = null );
+		$reverse = array_reverse ( explode ( '.', $offset ) );
+		
+		$remove = array_shift ( $reverse );
+		
+		$this -> config -> set( implode ( '.', array_reverse ( $reverse ) ), function ( &$a ) use ( $remove ): void
+		{
+		    unset ( $a[$remove] );
+		} );
 	}
 	
-	public function reset( string $offset, mixed $data ): void
+	/* public function reset( string $offset, mixed $data ): void
 	{
 		$this -> config -> set( $offset, fn( &$a ) => $a = $data );
-	}
+	} */
 	
 	public function all(): array
 	{
-		return $this -> config -> get();
+		return $this -> config -> get( null );
 	}
 }

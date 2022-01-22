@@ -8,19 +8,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Nouvu\Web\Foundation\{ Application, ApplicationTrait };
+use Nouvu\Web\Foundation\Application;
 use Nouvu\Web\View\Repository\CommitRepository;
+use Nouvu\Resources\Controllers\AbstractController AS UserController;
+use Nouvu\Resources\System\RestApi;
 
-class AbstractController
+class AbstractController extends UserController
 {
-	use ApplicationTrait;
-	
 	public function __construct ( protected Application $app )
-	{
-		/* $model = str_replace ( \Controller :: class, \Model :: class, static :: class );
-		
-		$this -> app -> request -> attributes -> set( '_model', $model ); */
-	}
+	{}
 	
 	protected function getModel( string $string )
 	{
@@ -30,9 +26,7 @@ class AbstractController
 		
 		$this -> app -> repository -> add( 'app.system.listModels', [ $name ] );
 		
-		return $this -> make( $name, [ $this -> app ] );
-		
-		//return $this -> make( $this -> app -> request -> attributes -> get( '_model.' . $name ), [ $this -> app ] );
+		return $this -> make( $name/* , [ $this -> app ] */ );
 	}
 	
 	private function getCommitInstance( array $data ): CommitRepository
@@ -56,7 +50,7 @@ class AbstractController
 	{
 		if ( $replace )
 		{
-			$this -> app -> view -> title -> reset( 'list', $title );
+			$this -> app -> view -> title -> set( 'list', $title );
 			
 			return;
 		}
@@ -69,14 +63,14 @@ class AbstractController
 		$this -> app -> view -> head -> add( 'selected', $head );
 	}
 	
-	protected function render( string $content = '', string | null $layout = null ): CommitRepository
+	protected function render( string $content = '', string | null $layout = null, array $arguments = [], string $body = 'body' ): CommitRepository
 	{
 		if ( $this -> isAjax() )
 		{
-			return $this -> json( $content );
+			return $this -> json( $content, body: $body );
 		}
 		
-		$commit = $this -> getCommitInstance( compact ( 'content', 'layout' ) );
+		$commit = $this -> getCommitInstance( compact ( 'content', 'layout', 'arguments' ) );
 		
 		$this -> app -> view -> render( $commit );
 		
@@ -87,10 +81,7 @@ class AbstractController
 	{
 		if ( $this -> isAjax() )
 		{
-			return $this -> customJson( [ 
-				'response' => 'redirect',
-				'path' => $path
-			] );
+			return $this -> customJson( RestApi :: success() -> header( action: 'redirect', path: $path ) );
 		}
 		
 		$commit = $this -> getCommitInstance( compact ( 'path' ) );
@@ -100,17 +91,22 @@ class AbstractController
 		return $commit;
 	}
 	
-	protected function json( string $content = '', string | null $layout = null ): CommitRepository
+	protected function json( string $content = '', array $arguments = [], string $body = 'body' ): CommitRepository
 	{
-		$commit = $this -> getCommitInstance( compact ( 'content', 'layout' ) );
+		$commit = $this -> getCommitInstance( compact ( 'content', 'arguments', 'body' ) );
 		
 		$this -> app -> view -> json( $commit );
 		
 		return $commit;
 	}
 	
-	protected function customJson( array $content ): CommitRepository
+	protected function customJson( array | RestApi $content ): CommitRepository
 	{
+		if ( $content instanceOf RestApi )
+		{
+			$content = $content -> get();
+		}
+		
 		$commit = $this -> getCommitInstance( [ 'closure' => function ( Response $response ) use ( $content ): void
 		{
 			$response -> headers -> set( 'Content-Type', 'application/json' );
@@ -126,11 +122,6 @@ class AbstractController
 	public function __invoke()
 	{
 		return $this -> app -> repository -> get( 'viewer.include' );
-	}
-	
-	protected function getPost(): array
-	{
-		return $this -> app -> request -> request -> all();
 	}
 	
 	protected function getEncoder( UserInterface $user ): PasswordEncoderInterface

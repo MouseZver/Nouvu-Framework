@@ -12,9 +12,9 @@ final class CommitRepository extends Repository
 	{
 		$value = $this -> get( $from );
 		
-		$this -> delete( $from );
+		$this -> remove( $from );
 		
-		$this -> reset( $to, $value );
+		$this -> set( $to, $value );
 	}
 	
 	public function getCommit(): string
@@ -25,5 +25,22 @@ final class CommitRepository extends Repository
 	public function getContainer(): mixed
 	{
 		return $this -> get( 'container' );
+	}
+	
+	public function getBody(): string
+	{
+		return $this -> get( 'body' );
+	}
+	
+	public function getArguments(): array
+	{
+		$arguments = [];
+		
+		foreach ( $this -> get( 'arguments', [] ) AS $k => $v )
+		{
+			$arguments['{{' . trim ( $k, '{}' ) . '}}'] = $v;
+		}
+		
+		return $arguments;
 	}
 }

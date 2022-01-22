@@ -10,7 +10,20 @@ use Stringable;
 
 class ShortTag implements Stringable
 {
-	protected string $regex = '#{<{([\w\-\/]+)(=([\w\|_-]+)|)}>}#';
+	//protected string $regex = '#{<{([\w\-\/]+)(=([\w\|\/_-]+)|)}>}#';
+	
+	protected array $regex = [
+		// {<{LastUsername}>}
+		'#{<{(\w+)}>}#', 
+		
+		// {<{head=meta-charset|meta-viewport}>}
+		// {<{include=admin-panel/blocks/menu}>}
+		'#{<{(\w+)=([\w\|\-\/]+)}>}#', 
+		
+		// {<{if(Validator)}>}
+		// {<{end(validator)}>}
+		//'#{<{(?<action>(if))\(([A-z]+)\)}>}#', 
+	];
 	
 	public function __construct ( 
 		protected array $comparison, 
@@ -51,7 +64,7 @@ class ShortTag implements Stringable
 			{
 				if ( /* ! is_null ( $class ) &&  */method_exists ( $class, $method ) )
 				{
-					return $class -> {$method}( ...$this -> atributes( $matches[3] ?? null ) );
+					return $class -> {$method}( ...$this -> atributes( $matches[2] ?? null ) ); // $matches[3]
 				}
 			}
 		}

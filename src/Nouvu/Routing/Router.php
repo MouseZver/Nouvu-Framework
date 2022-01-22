@@ -20,9 +20,12 @@ class Router
 	{
 		$this -> routing = $app -> repository -> get( 'router.closure' )( $app );
 		
-		foreach ( $this -> routing AS $name => [ 'edit' => $edit, 'route' => $route ] )
+		foreach ( $this -> routing AS $name => [ 'active' => $active, 'route' => $route ] )
 		{
-			$this -> collection() -> add( $name, $route );
+			if ( $active )
+			{
+				$this -> collection() -> add( $name, $route );
+			}
 		}
 	}
 	
@@ -43,18 +46,23 @@ class Router
 	
 	public function getAttributesNotFound(): array
 	{
-		return $this -> getRouting( $this -> app -> response :: HTTP_NOT_FOUND ); // error404 $this -> app -> response :: HTTP_NOT_FOUND
+		return $this -> getRoutingByName( $this -> app -> response :: HTTP_NOT_FOUND ); // error404 $this -> app -> response :: HTTP_NOT_FOUND
 	}
 	
 	public function getAttributesError(): array
 	{
-		return $this -> getRouting( $this -> app -> response :: HTTP_INTERNAL_SERVER_ERROR ); // error500 $this -> app -> response :: HTTP_INTERNAL_SERVER_ERROR
+		return $this -> getRoutingByName( $this -> app -> response :: HTTP_INTERNAL_SERVER_ERROR ); // error500 $this -> app -> response :: HTTP_INTERNAL_SERVER_ERROR
 	}
 	
-	public function getRouting( string | int $name ): array
+	public function getRoutingByName( string | int $name ): array
 	{
 		// return array_merge ( Arr :: get( $name . '.route.controller', $this -> routing ), [ '_route' => $name ] );
 		
 		return array_merge ( $this -> routing[$name]['route']['controller'], [ '_route' => $name ] );
+	}
+	
+	public function getPathByName( string | int $name ): string | null
+	{
+		return $this -> routing[$name]['route']['path'] ?? null;
 	}
 }

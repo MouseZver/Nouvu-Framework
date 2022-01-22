@@ -5,7 +5,7 @@ declare ( strict_types = 1 );
 namespace Nouvu\Web\View\Repository;
 
 use Nouvu\Web\Component\Config\Repository;
-use Nouvu\Web\View\Builder\BuilderHtml;
+use Nouvu\Resources\System\BuilderHtml\Builder;
 
 final class HeadRepository extends Repository
 {
@@ -23,7 +23,12 @@ final class HeadRepository extends Repository
 	{
 		foreach ( $this -> getSelected() AS $tag )
 		{
-			yield new BuilderHtml( $this -> get( 'list.' . $tag ) );
+			if ( ! $this -> has( 'list.' . $tag ) )
+			{
+				throw new \InvalidArgumentException( 'HeadRepository - not found HeadTag: ' . $tag );
+			}
+			
+			yield new Builder( $this -> get( 'list.' . $tag ) );
 		}
 	}
 }

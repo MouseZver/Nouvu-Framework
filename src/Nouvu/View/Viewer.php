@@ -49,14 +49,14 @@ final class Viewer
 	
 	public function setTitle( Repository $repository ): void
 	{
-		$this -> title -> set( $repository -> get( 'config.default_title' ) );
+		$this -> title -> set( null, $repository -> get( 'config.default_title' ) );
 	}
 	
 	public function render( CommitRepository $commit ): void
 	{
-		$commit -> get( 'layout' ) ?? $commit -> reset ( 'layout', $this -> layout );
+		$commit -> get( 'layout' ) ?? $commit -> set ( 'layout', $this -> layout );
 		
-		$commit -> reset ( 'commit', 'render' );
+		$commit -> set ( 'commit', 'render' );
 		
 		$commit -> replace( 'content', 'container.content' );
 		
@@ -65,7 +65,7 @@ final class Viewer
 	
 	public function redirect( CommitRepository $commit ): void
 	{
-		$commit -> reset ( 'commit', 'redirect' );
+		$commit -> set ( 'commit', 'redirect' );
 		
 		$commit -> replace( 'path', 'container' );
 	}
@@ -74,43 +74,45 @@ final class Viewer
 	{
 		$this -> render( $commit );
 		
-		$commit -> reset ( 'commit', 'json' );
+		$commit -> set ( 'commit', 'json' );
+		
+		$commit -> set( 'container', [ 'content' => $commit -> get( 'container.content' ) ] );
 	}
 	
 	public function custom( CommitRepository $commit ): void
 	{
-		$commit -> reset ( 'commit', 'custom' );
+		$commit -> set ( 'commit', 'custom' );
 	}
 	
 	public function filter( CommitRepository $commit ): void
 	{
-		$commit -> set( array_filter ( $commit -> all() ) );
+		$commit -> set( null, array_filter ( $commit -> all() ) );
 	}
 	
 	public function filling( CommitRepository $commit ): void
 	{
 		foreach ( [ 'directory', 'layout', 'head', 'title', 'extension' ] AS $name )
 		{
-			$commit -> reset ( $name, $this -> {$name} );
+			$commit -> set( $name, $this -> {$name} );
 		}
 	}
 	
-	public function terminal( CommitRepository $commit ): void
+	public function terminal( CommitRepository $commit, Content $content ): void
 	{
 		$this -> filter( $commit );
 		
 		$this -> filling( $commit );
 		
-		$this -> send( $commit, new Terminal( $commit ) );
+		$this -> send( $commit, new Terminal( $commit ), $content );
 	}
 	
-	private function send( CommitRepository $commit, Terminal $terminal ): void
+	private function send( CommitRepository $commit, Terminal $terminal, Content $content ): void
 	{
 		match ( $commit -> getCommit() )
 		{
-			'render'	=> $terminal -> contentResponse( $this -> response, new Content( $commit ) ),
+			'render'	=> $terminal -> contentResponse( $this -> response, $content ),
 			'redirect'	=> $terminal -> redirectResponse( $this -> response ),
-			'json'		=> $terminal -> jsonResponse( $this -> response, new Content( $commit ) ),
+			'json'		=> $terminal -> jsonResponse( $this -> response, $content ),
 			'custom'	=> $terminal -> customResponse( $this -> response ),
 		};
 		

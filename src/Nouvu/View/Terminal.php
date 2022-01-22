@@ -7,6 +7,7 @@ namespace Nouvu\Web\View;
 use Symfony\Component\HttpFoundation\Response;
 use Nouvu\Web\View\Builder\Content;
 use Nouvu\Web\View\Repository\CommitRepository;
+use Nouvu\Resources\System\RestApi;
 
 class Terminal
 {
@@ -35,11 +36,12 @@ class Terminal
 		
 		$build -> setContent( $response, function ( string $content ) use ( $build ): string
 		{
-			return json_encode ( [ 
-				'response' => 'content',
-				'content' => $content, 
-				'title' => $build -> getTitle(),
-			], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+			return json_encode ( RestApi :: success() 
+				-> header( action: 'update', container: $this -> commit -> getBody() ) 
+				-> data( title: $build -> getTitle(), content: $content ) 
+				-> get(), 
+				JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE 
+			);
 		} );
 	}
 	
