@@ -2,11 +2,11 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\View;
+namespace Nouvu\Framework\View;
 
 use Symfony\Component\HttpFoundation\Response;
-use Nouvu\Web\View\Builder\Content;
-use Nouvu\Web\View\Repository\CommitRepository;
+use Nouvu\Framework\View\Builder\Content;
+use Nouvu\Framework\View\Repository\CommitRepository;
 use Nouvu\Resources\System\RestApi;
 
 class Terminal

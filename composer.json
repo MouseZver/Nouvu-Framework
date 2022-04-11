@@ -1,0 +1,32 @@
+{
+    "name": "nouvu/framework",
+    "description": "Nouvu Framework",
+    "type": "library",
+    "license": "Apache-2.0",
+	"homepage": "https://github.com/MouseZver/Nouvu-Framework",
+	"keywords": [ "PHP 8.1", "Nouvu", "Framework" ],
+    "authors": [
+        {
+            "name": "MouseZver",
+            "email": "mouse-zver@xaker.ru",
+			"role": "Developer"
+        }
+    ],
+	"require": {
+		"php": "^8.1",
+		"psr/container": "^1.1|^2.0",
+		"nouvu/config": "^4.2",
+		"nouvu/container": "^2.1",
+		"nouvu/lerma": "^7.2",
+		"symfony/http-foundation": "^6.0",
+        "symfony/routing": "^6.0",
+        "symfony/validator": "^6.0",
+        "symfony/security-core": "^6.0",
+        "symfony/security-http": "^6.0"
+	},
+    "autoload": {
+         "psr-4": {
+             "Nouvu\\Framework\\": "src/Nouvu"
+         }
+    }
+}

@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Routing;
+namespace Nouvu\Framework\Routing;
 
 use Symfony\Component\Routing\RouteCollection AS SymfonyCollection;
 use Symfony\Component\Routing\Route;

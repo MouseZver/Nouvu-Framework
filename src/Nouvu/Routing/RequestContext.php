@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Routing;
+namespace Nouvu\Framework\Routing;
 
 use Symfony\Component\Routing\RequestContext AS SymfonyContext;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,18 +2,17 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Http;
+namespace Nouvu\Framework\Http;
 
 use Symfony\Component\Routing\Exception\ResourceNotFoundException AS SymfonyRoutingNotFound;
 use Symfony\Component\HttpFoundation\Response;
-use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\Http\Controllers\KernelController;
-use Nouvu\Web\Routing\RouteCollection AS NouvuCollection;
-use Nouvu\Web\Routing\RequestContext AS NouvuContext;
-use Nouvu\Web\Routing\UrlMatcher AS NouvuMatcher;
-use Nouvu\Web\Routing\{ CollectionTrait, ContextTrait };
-use Nouvu\Web\View\Repository\CommitRepository;
-use Nouvu\Web\View\Builder\Content;
+use Nouvu\Framework\Foundation\Application AS App;
+use Nouvu\Framework\Http\Controllers\KernelController;
+use Nouvu\Framework\Routing\{ 
+	RouteCollection AS NouvuCollection, RequestContext AS NouvuContext, UrlMatcher AS NouvuMatcher,
+	CollectionTrait, ContextTrait
+};
+use Nouvu\Framework\View\{ Repository\CommitRepository, Builder\Content };
 use Nouvu\Resources\Controllers;
 
 class Kernel
@@ -63,7 +62,7 @@ class Kernel
 	
 	public function setCharset(): void
 	{
-		$this -> app -> response -> setCharset( $this -> app -> getCharset() );
+		$this -> app -> response -> setCharset( $this -> app -> repository -> get( 'config.default_charset' ) );
 	}
 	
 	public function getCommit(): CommitRepository
@@ -75,7 +74,29 @@ class Kernel
 	
 	public function terminal( CommitRepository $commit ): void
 	{
-		$this -> app -> view -> terminal( $commit, $this -> app -> make( Content :: class, [ $commit ] ) );
+		if ( ! $this -> app -> container -> has( Content :: class ) )
+		{
+			$class = new class
+			{
+				private Content $content;
+				
+				public function set( CommitRepository $commit ): self
+				{
+					$this -> content = new Content( $commit );
+					
+					return $this;
+				}
+				
+				public function get(): Content
+				{
+					return $this -> content;
+				}
+			};
+			
+			$this -> app -> container -> set( Content :: class, fn() => $class );
+		}
+		
+		$this -> app -> view -> terminal( $commit, $this -> app -> container -> get( Content :: class ) -> set( $commit ) -> get() );
 	}
 	
 	public function handle( NouvuMatcher $NouvuMatcher ): CommitRepository
@@ -96,17 +117,6 @@ class Kernel
 			
 			return $this -> getCommit();
 		}
-		catch ( \Throwable $e )
-		{
-			if ( $this -> app -> repository -> get( 'config.debug.display' ) )
-			{
-				throw $e;
-			}
-			
-			$this -> setRequestAttributes( $this -> getAttributesError( $NouvuMatcher ) );
-			
-			return $this -> getCommit();
-		}
 	}
 	
 	public function send()
@@ -117,6 +127,20 @@ class Kernel
 		
 		$matcher = $this -> getMatcher( $this -> collection(), $context );
 		
-		$this -> terminal( $this -> handle( $matcher ) );
+		try
+		{
+			$this -> terminal( $this -> handle( $matcher ) );
+		}
+		catch ( \Throwable $e )
+		{
+			if ( $this -> app -> repository -> get( 'config.debug.display' ) )
+			{
+				throw $e;
+			}
+			
+			$this -> setRequestAttributes( $this -> getAttributesError( $matcher ) );
+			
+			$this -> terminal( $this -> getCommit() );
+		}
 	}
 }

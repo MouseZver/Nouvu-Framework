@@ -2,11 +2,11 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Component\Validator;
+namespace Nouvu\Framework\Component\Validator;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\{ Constraints as Assert, Validator\ValidatorInterface, ConstraintViolationList };
-use Nouvu\Web\Component\Config\Repository;
+use Nouvu\Framework\Component\Config\Repository;
 
 class Validation
 {

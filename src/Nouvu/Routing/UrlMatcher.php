@@ -2,10 +2,10 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Routing;
+namespace Nouvu\Framework\Routing;
 
-use Nouvu\Web\Routing\RouteCollection AS NouvuCollection;
-use Nouvu\Web\Routing\RequestContext AS NouvuContext;
+use Nouvu\Framework\Routing\RouteCollection AS NouvuCollection;
+use Nouvu\Framework\Routing\RequestContext AS NouvuContext;
 use Symfony\Component\Routing\Matcher\UrlMatcher AS Matcher;
 
 class UrlMatcher

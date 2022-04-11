@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Component\Config;
+namespace Nouvu\Framework\Component\Config;
 
 use Nouvu\Config\Config;
 
@@ -17,7 +17,7 @@ class Repository
 	
 	public function set( string | int | null $offset, mixed $data ): void
 	{
-		$this -> config -> set( $offset, fn( &$a ) => $a = $data );
+		$this -> config -> set( $offset, $data );
 	}
 	
 	public function get( string | int $offset, mixed $default = null ): mixed
@@ -32,12 +32,7 @@ class Repository
 	
 	public function add( string | int | null $offset, array $data, bool $before = false ): void
 	{
-		$this -> config -> set( $offset, function ( &$a ) use ( $before, $data ): void
-		{
-			$a ??= [];
-			
-			$a = ( $before ? array_merge ( $data, $a ) : array_merge ( $a, $data ) );
-		} );
+		$this -> config -> add( $offset, $data, $before );
 	}
 	
 	public function remove( string $offset ): void
@@ -46,16 +41,14 @@ class Repository
 		
 		$remove = array_shift ( $reverse );
 		
-		$this -> config -> set( implode ( '.', array_reverse ( $reverse ) ), function ( &$a ) use ( $remove ): void
-		{
-		    unset ( $a[$remove] );
-		} );
+		$newOffset = implode ( '.', array_reverse ( $reverse ) );
+		
+		$get = $this -> config -> get( $newOffset, [] );
+		
+		unset ( $get[$remove] );
+		
+		$this -> config -> set( $newOffset, $get );
 	}
-	
-	/* public function reset( string $offset, mixed $data ): void
-	{
-		$this -> config -> set( $offset, fn( &$a ) => $a = $data );
-	} */
 	
 	public function all(): array
 	{

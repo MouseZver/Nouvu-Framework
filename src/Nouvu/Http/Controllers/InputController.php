@@ -2,9 +2,9 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Http\Controllers;
+namespace Nouvu\Framework\Http\Controllers;
 
-use Nouvu\Web\Component\Config\Repository;
+use Nouvu\Framework\Component\Config\Repository;
 
 class InputController extends Repository
 {

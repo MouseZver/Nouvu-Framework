@@ -2,30 +2,34 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Component\Database;
+namespace Nouvu\Framework\Component\Database;
 
-use Nouvu\Web\Foundation\Application AS App;
+use Nouvu\Framework\Foundation\Application AS App;
 
 final class DatabaseManager
 {
-	private DatabaseToolsInterface $DatabaseToolsInterface;
+	use Trait\DatabaseListener;
+	
+	private DatabaseInterface $connect;
 	
 	public function __construct ( private App $app )
 	{
-		$this -> DatabaseToolsInterface = $app -> make( $app -> repository -> get( 'database.class' ), [ $app ] );
+		$class = $app -> repository -> get( 'database.class' );
+		
+		$this -> connect = new $class( $app );
 	}
 	
-	public function prepare( string | array $sql, array | null $data = null ): DatabaseRequestInterface
+	public function prepare( string | array $sql, array | null $data = null ): StatementInterface
 	{
-		$this -> DatabaseToolsInterface -> prepare( $sql, $data );
+		$this -> connect -> prepare( $sql, $data );
 		
-		return $this -> app -> make( Components :: class, [ $this -> DatabaseToolsInterface ] );
+		return new Statement( $this -> connect );
 	}
 	
-	public function query( string | array $sql ): DatabaseRequestInterface
+	public function query( string | array $sql ): StatementInterface
 	{
-		$this -> DatabaseToolsInterface -> query( $sql );
+		$this -> connect -> query( $sql );
 		
-		return $this -> app -> make( Components :: class, [ $this -> DatabaseToolsInterface ] );
+		return new Statement( $this -> connect );
 	}
 }

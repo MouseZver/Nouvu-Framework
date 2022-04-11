@@ -2,9 +2,9 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\View\Repository;
+namespace Nouvu\Framework\View\Repository;
 
-use Nouvu\Web\Component\Config\Repository;
+use Nouvu\Framework\Component\Config\Repository;
 use Nouvu\Resources\System\BuilderHtml\Builder;
 
 final class HeadRepository extends Repository

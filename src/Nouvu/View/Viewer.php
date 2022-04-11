@@ -2,12 +2,12 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\View;
+namespace Nouvu\Framework\View;
 
 use Symfony\Component\HttpFoundation\{ Request, Response };
-use Nouvu\Web\View\Builder\Content;
-use Nouvu\Web\View\Repository\{ CommitRepository, HeadRepository, TitleRepository };
-use Nouvu\Web\Component\Config\Repository;
+use Nouvu\Framework\View\Builder\Content;
+use Nouvu\Framework\View\Repository\{ CommitRepository, HeadRepository, TitleRepository };
+use Nouvu\Framework\Component\Config\Repository;
 
 final class Viewer
 {

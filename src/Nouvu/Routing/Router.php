@@ -2,25 +2,26 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Routing;
+namespace Nouvu\Framework\Routing;
 
-use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\Routing\RouteCollection AS NouvuCollection;
-use Nouvu\Web\Routing\RequestContext AS NouvuContext;
-use Nouvu\Web\Routing\UrlMatcher AS NouvuMatcher;
+use Nouvu\Framework\Foundation\Application AS App;
+use Nouvu\Framework\Routing\RouteCollection AS NouvuCollection;
+use Nouvu\Framework\Routing\RequestContext AS NouvuContext;
+use Nouvu\Framework\Routing\UrlMatcher AS NouvuMatcher;
+use Nouvu\Framework\Component\Config\Repository;
 
 class Router
 {
-	private array $routing;
+	private Repository $routing;
 	
 	use CollectionTrait;
 	use ContextTrait;
 	
 	public function __construct ( private App $app )
 	{
-		$this -> routing = $app -> repository -> get( 'router.closure' )( $app );
+		$this -> routing = new Repository( $app -> repository -> get( 'router.closure' )( $app ) );
 		
-		foreach ( $this -> routing AS $name => [ 'active' => $active, 'route' => $route ] )
+		foreach ( $this -> routing -> all() AS $name => [ 'active' => $active, 'route' => $route ] )
 		{
 			if ( $active )
 			{
@@ -36,7 +37,7 @@ class Router
 	
 	public function matcher( NouvuCollection $collection, NouvuContext $context ): NouvuMatcher
 	{
-		return $this -> app -> make( NouvuMatcher :: class, [ $collection, $context ] );
+		return $this -> app -> container -> make( NouvuMatcher :: class, [ $collection, $context ] );
 	}
 	
 	public function getAttributes( NouvuMatcher $matcher ): array
@@ -58,11 +59,15 @@ class Router
 	{
 		// return array_merge ( Arr :: get( $name . '.route.controller', $this -> routing ), [ '_route' => $name ] );
 		
-		return array_merge ( $this -> routing[$name]['route']['controller'], [ '_route' => $name ] );
+		// return array_merge ( $this -> routing[$name]['route']['controller'], [ '_route' => $name ] );
+		
+		$this -> routing -> add( $name . '.route.controller', [ '_route' => $name ] );
+		
+		return $this -> routing -> get( $name . '.route.controller' );
 	}
 	
 	public function getPathByName( string | int $name ): string | null
 	{
-		return $this -> routing[$name]['route']['path'] ?? null;
+		return $this -> routing -> get( $name . '.route.path', null );
 	}
 }

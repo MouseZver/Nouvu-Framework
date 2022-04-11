@@ -2,14 +2,14 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Routing;
+namespace Nouvu\Framework\Routing;
 
-use Nouvu\Web\Routing\RouteCollection;
+use Nouvu\Framework\Routing\RouteCollection;
 
 trait CollectionTrait
 {
 	public function collection(): RouteCollection
 	{
-		return $this -> app -> make( RouteCollection :: class );
+		return $this -> app -> container -> make( RouteCollection :: class );
 	}
 }

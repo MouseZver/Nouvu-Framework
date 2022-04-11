@@ -2,11 +2,11 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\View\Builder;
+namespace Nouvu\Framework\View\Builder;
 
 use Symfony\Component\HttpFoundation\Response;
-use Nouvu\Web\View\Repository\CommitRepository;
-use Nouvu\Web\View\Builder\ShortTag;
+use Nouvu\Framework\View\Repository\CommitRepository;
+use Nouvu\Framework\View\Builder\ShortTag;
 use Stringable;
 
 class Content

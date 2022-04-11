@@ -2,7 +2,7 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Component\Security\Core\User;
+namespace Nouvu\Framework\Component\Security\Core\User;
  
 use Symfony\Component\Security\Core\Authentication\Provider\UserAuthenticationProvider;
 use Symfony\Component\Security\Core\User\UserProviderInterface;

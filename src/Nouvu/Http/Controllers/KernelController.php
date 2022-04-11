@@ -2,10 +2,10 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Http\Controllers;
+namespace Nouvu\Framework\Http\Controllers;
 
-use Nouvu\Web\Foundation\Application AS App;
-use Nouvu\Web\View\Repository\CommitRepository;
+use Nouvu\Framework\Foundation\Application AS App;
+use Nouvu\Framework\View\Repository\CommitRepository;
 
 class KernelController
 {

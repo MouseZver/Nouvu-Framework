@@ -2,9 +2,9 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Component\Database;
+namespace Nouvu\Framework\Component\Database;
 
-interface DatabaseToolsInterface
+interface DatabaseInterface
 {
 	public function prepare( string | array $sql, array $data ): void;
 	
@@ -16,5 +16,5 @@ interface DatabaseToolsInterface
 	
 	public function get( int $code, callable | string $argument ): mixed;
 	
-	public function getAll( int $code, callable | string $argument ): array;
+	public function all( int $code, callable | string $argument ): array;
 }

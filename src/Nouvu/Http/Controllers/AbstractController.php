@@ -2,15 +2,15 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\Http\Controllers;
+namespace Nouvu\Framework\Http\Controllers;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Nouvu\Web\Foundation\Application;
-use Nouvu\Web\View\Repository\CommitRepository;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\Security\Core\{ Security, User\UserInterface };
+use Nouvu\Framework\Foundation\Application;
+use Nouvu\Framework\View\Repository\CommitRepository;
 use Nouvu\Resources\Controllers\AbstractController AS UserController;
+use Nouvu\Resources\Models\AbstractModel;
 use Nouvu\Resources\System\RestApi;
 
 class AbstractController extends UserController
@@ -18,15 +18,18 @@ class AbstractController extends UserController
 	public function __construct ( protected Application $app )
 	{}
 	
-	protected function getModel( string $string )
+	protected function model( string $namespace ): AbstractModel
 	{
-		$transformedSegments = array_map ( fn( string $a ) => ucfirst ( strtolower ( $a ) ), explode ( '.', $string ) );
+		$name = sprintf ( \Nouvu\Resources\Models :: class . '\\%sModel', $namespace );
 		
-		$name = sprintf ( 'Nouvu\\Resources\\Models\\%sModel', implode ( '\\', $transformedSegments ) );
+		if ( $this -> app -> repository -> has( 'app.system.listModels.' . $namespace ) )
+		{
+			return $this -> app -> container -> get( $name );
+		}
 		
-		$this -> app -> repository -> add( 'app.system.listModels', [ $name ] );
+		$this -> app -> repository -> set( 'app.system.listModels.' . $namespace, $name );
 		
-		return $this -> make( $name/* , [ $this -> app ] */ );
+		return $this -> app -> container -> make( $name );
 	}
 	
 	private function getCommitInstance( array $data ): CommitRepository
@@ -41,31 +44,24 @@ class AbstractController extends UserController
 		return new CommitRepository( $data );
 	}
 	
-	protected function isAjax(): bool
+	protected function setThreadTitles( string ...$titles ): void
 	{
-		return $this -> app -> request -> isXmlHttpRequest();
+		$this -> app -> view -> title -> add( 'list', $titles, true );
 	}
 	
-	protected function title( array $title, bool $replace = false ): void
+	protected function setSingleTitles( string ...$titles ): void
 	{
-		if ( $replace )
-		{
-			$this -> app -> view -> title -> set( 'list', $title );
-			
-			return;
-		}
-		
-		$this -> app -> view -> title -> add( 'list', $title, true );
+		$this -> app -> view -> title -> set( 'list', $titles );
 	}
 	
-	protected function header( string ...$head ): void
+	protected function header( string ...$heades ): void
 	{
-		$this -> app -> view -> head -> add( 'selected', $head );
+		$this -> app -> view -> head -> add( 'selected', $heades );
 	}
 	
 	protected function render( string $content = '', string | null $layout = null, array $arguments = [], string $body = 'body' ): CommitRepository
 	{
-		if ( $this -> isAjax() )
+		if ( $this -> app -> request -> isXmlHttpRequest() )
 		{
 			return $this -> json( $content, body: $body );
 		}
@@ -79,9 +75,9 @@ class AbstractController extends UserController
 	
 	protected function redirect( string $path ): CommitRepository
 	{
-		if ( $this -> isAjax() )
+		if ( $this -> app -> request -> isXmlHttpRequest() )
 		{
-			return $this -> customJson( RestApi :: success() -> header( action: 'redirect', path: $path ) );
+			return $this -> customJson( RestApi :: success() -> redirect( path: $path ) );
 		}
 		
 		$commit = $this -> getCommitInstance( compact ( 'path' ) );
@@ -124,8 +120,13 @@ class AbstractController extends UserController
 		return $this -> app -> repository -> get( 'viewer.include' );
 	}
 	
-	protected function getEncoder( UserInterface $user ): PasswordEncoderInterface
+	protected function getPasswordHasher( UserInterface $user ): PasswordHasherInterface
 	{
-		return $this -> app -> container -> get( 'encoder.factory' ) -> getEncoder( $user );
+		/*$memory = $this -> app -> container -> get( 'security.memory.user_provider' );
+		
+		$memory -> createUser( $user );*/
+		
+		return $this -> app -> container -> get( 'encoder.factory' ) -> getPasswordHasher( $user );
+		//	-> getPasswordHasher( $memory -> loadUserByIdentifier( $user -> getUserIdentifier() ) );
 	}
 }

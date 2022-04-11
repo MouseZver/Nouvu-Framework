@@ -2,8 +2,9 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Web\View\Builder;
+namespace Nouvu\Framework\View\Builder;
 
+use Nouvu\Resources\System\Helpers;
 use Closure;
 use Iterator;
 use Stringable;
@@ -14,15 +15,21 @@ class ShortTag implements Stringable
 	
 	protected array $regex = [
 		// {<{LastUsername}>}
-		'#{<{(\w+)}>}#', 
+		// {<{@LastUsername}>}
+		'#{<{(\w+)}>}#',
+		'#{<{@(\w+)}>}#', 
 		
 		// {<{head=meta-charset|meta-viewport}>}
 		// {<{include=admin-panel/blocks/menu}>}
-		'#{<{(\w+)=([\w\|\-\/]+)}>}#', 
+		// {<{@pathByName=admin-panel/blocks/menu}>}
+		'#{<{(\w+)=([\w\|\-\/]+)}>}#',
+		'#{<{@(\w+)=([\w\|\-\/]+)}>}#', 
 		
 		// {<{if(Validator)}>}
 		// {<{end(validator)}>}
 		//'#{<{(?<action>(if))\(([A-z]+)\)}>}#', 
+		
+		// {<{@function}>}
 	];
 	
 	public function __construct ( 
@@ -67,6 +74,11 @@ class ShortTag implements Stringable
 					return $class -> {$method}( ...$this -> atributes( $matches[2] ?? null ) ); // $matches[3]
 				}
 			}
+		}
+		
+		if ( function_exists ( Helpers :: class . '\\' . $matches[1] ) )
+		{
+			return ( Helpers :: class . '\\' . $matches[1] )( ...$this -> atributes( $matches[2] ?? null ) );
 		}
 		
 		if ( is_callable ( $this -> call ) )
