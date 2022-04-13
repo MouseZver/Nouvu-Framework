@@ -169,7 +169,7 @@ class Roles
 				
 				$this -> entityUser -> call( $user, $std );
 				
-				$diff = array_diff ( $user -> getRoles(), [ $this -> getRole( $newRole -> getId() ) -> getRole() ] );
+				$diff = array_diff ( $user -> getRoles(), [ $this -> get( $newRole -> getId() ) -> getRole() ] );
 				
 				$user -> setRoles( array_unique ( [ ...$diff, $newRole -> getRole() ] ) );
 				
