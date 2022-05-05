@@ -137,6 +137,10 @@ class Kernel
 			{
 				throw $e;
 			}
+			else
+			{
+				error_log ( ( string ) $e );
+			}
 			
 			$this -> setRequestAttributes( $this -> getAttributesError( $matcher ) );
 			
