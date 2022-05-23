@@ -6,7 +6,7 @@ namespace Nouvu\Framework\Component\Database;
 
 use Nouvu\Framework\Foundation\Application AS App;
 
-class Statement implements StatementInterface
+class Statement implements StatementInterface, \IteratorAggregate
 {
 	public function __construct ( private DatabaseInterface $DatabaseInterface )
 	{}
@@ -34,5 +34,10 @@ class Statement implements StatementInterface
 	public function id(): int
 	{
 		return $this -> DatabaseInterface -> id();
+	}
+	
+	public function getIterator(): \Traversable
+	{
+		return $this -> DatabaseInterface;
 	}
 }
