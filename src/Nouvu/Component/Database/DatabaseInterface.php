@@ -16,5 +16,5 @@ interface DatabaseInterface
 	
 	public function get( int $code, callable | string $argument ): mixed;
 	
-	public function all( int $code, callable | string $argument ): array;
+	public function all( int $code, callable | string $argument ): iterable;
 }
