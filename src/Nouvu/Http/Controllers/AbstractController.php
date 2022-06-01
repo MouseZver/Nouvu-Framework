@@ -96,6 +96,18 @@ class AbstractController extends UserController
 		return $commit;
 	}
 	
+	protected function text( string $string ): CommitRepository
+	{
+		$commit = $this -> getCommitInstance( [ 'closure' => function ( Response $response ) use ( $string ): void
+		{
+			$response -> setContent( $string );
+		} ] );
+		
+		$this -> app -> view -> custom( $commit );
+		
+		return $commit;
+	}
+	
 	protected function customJson( array | RestApi $content ): CommitRepository
 	{
 		if ( $content instanceOf RestApi )
