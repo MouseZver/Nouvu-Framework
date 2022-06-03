@@ -4,30 +4,23 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Framework\Component\Security\Http;
 
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\HttpFoundation\{ Request, Response, Cookie, Session\SessionInterface };
-use Symfony\Component\Security\Core\Authentication\Token\{ Storage\TokenStorageInterface, TokenInterface };
-use Symfony\Component\Security\Http\RememberMe\{ RememberMeHandlerInterface, ResponseListener };
 use Nouvu\Framework\Component\Database\DatabaseManager;
 use Nouvu\Framework\Component\Security\Core\Provider\DatabaseTokenProvider;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\HttpFoundation\{ Request, Response, Cookie, Session\SessionInterface };
+use Symfony\Component\Security\Core\Authentication\Token\{ Storage\TokenStorageInterface, TokenInterface };
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\RememberMe\{ RememberMeHandlerInterface, ResponseListener };
 
 class SessionRememberMeHandler
 {
 	protected const
-		CONT_DATABASE_TOKEN_PROVIDER = 'security.database.token_provider',
 		CONT_DATABASE_USER_PROVIDER = 'security.database.user_provider',
 		CONT_REMEMBER_HASHER = 'security.signature_remember_me_hasher';
 	
 	public function __construct ( 
-		/* private DatabaseTokenProvider $tokenProvider,
-		private RememberMeHandlerInterface $rememberMeHandler,
-		private DatabaseManager $databaseManager,
-		private Request $request,
-		private Response $response,
-		private SessionInterface $session, */
 		private ContainerInterface $container,
 		private string $cookie_name, 
 		private string $session_name,
@@ -63,24 +56,13 @@ class SessionRememberMeHandler
 			{
 				$user = $this -> container -> get( self :: CONT_DATABASE_USER_PROVIDER ) -> loadUserByIdentifier( $email );
 				
-				$this -> container -> get( \AuthenticationHandler :: class ) -> createSession( $user, 'secured_area' );
+				$this -> container -> get( \AuthenticationHandler :: class ) -> createSession( $user, 'secured_area', false, $storage );
 			}
 			catch ( UserNotFoundException )
 			{
 				$this -> clear( $storage );
 			}
 		}
-	}
-	
-	public function login( TokenStorageInterface $storage, string $series ): void
-	{
-		//$token = $this -> tokenProvider -> loadTokenByIdentifier( $series );
-		$token = $this -> container -> get( self :: CONT_DATABASE_TOKEN_PROVIDER ) -> loadTokenByIdentifier( $series );
-		
-		//$this -> rememberMeHandler -> createRememberMeCookie( $token -> getUser() );
-		$this -> container -> get( self :: CONT_REMEMBER_HASHER ) -> createRememberMeCookie( $token -> getUser() );
-		
-		$this -> save( $storage, $token );
 	}
 	
 	public function getCookie(): ?Cookie
