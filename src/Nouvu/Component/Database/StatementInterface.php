@@ -23,7 +23,7 @@ interface StatementInterface
 	
 	public function count(): int;
 	
-	public function get( int $code, callable | string $argument ): mixed;
+	public function get( int $code, callable | string $argument = null ): mixed;
 	
-	public function all( int $code, callable | string $argument ): array;
+	public function all( int $code, callable | string $argument = null ): array;
 }
