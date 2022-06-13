@@ -18,7 +18,6 @@
 		"nouvu/config": "^4.2",
 		"nouvu/container": "^2.1",
 		"nouvu/lerma": "^7.2",
-		"phpmailer/phpmailer": "^6.5",
 		"symfony/http-foundation": "^6.0",
         "symfony/routing": "^6.0",
         "symfony/validator": "^6.0",
