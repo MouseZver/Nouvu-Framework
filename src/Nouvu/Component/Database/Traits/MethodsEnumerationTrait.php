@@ -2,9 +2,9 @@
 
 declare ( strict_types = 1 );
 
-namespace Nouvu\Framework\Component\Database\Trait;
+namespace Nouvu\Framework\Component\Database\Traits;
 
-trait DatabaseListener
+trait MethodsEnumerationTrait
 {
 	private function cell( string $action, string $name ): \Closure
 	{

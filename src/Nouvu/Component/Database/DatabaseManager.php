@@ -8,7 +8,7 @@ use Nouvu\Framework\Foundation\Application AS App;
 
 final class DatabaseManager
 {
-	use Trait\DatabaseListener;
+	use Traits\MethodsEnumerationTrait;
 	
 	private DatabaseInterface $connect;
 	
