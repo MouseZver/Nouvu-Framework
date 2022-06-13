@@ -36,7 +36,7 @@ class Statement implements StatementInterface, \IteratorAggregate
 		return $this -> DatabaseInterface -> id();
 	}
 	
-	public function getIterator(): \Traversable
+	public function getIterator(): \Traversable 
 	{
 		return $this -> DatabaseInterface;
 	}
