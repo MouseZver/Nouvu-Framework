@@ -11,17 +11,30 @@ class RouteCollection
 {
 	private SymfonyCollection $collection;
 	
+	private array $argumentsRoute = [
+		'path',
+		'defaults',
+		'requirements',
+		'options',
+		'host',
+		'schemes',
+		'methods',
+		'condition',
+	];
+	
 	public function __construct ()
 	{
 		$this -> collection = new SymfonyCollection;
 	}
 	
 	/*
-		- https://symfony.com/doc/4.3/components/routing.html
+		- https://symfony.com/doc/current/routing.html
 	*/
 	public function add( string | int $name, array $route )
 	{
-		$this -> collection -> add( ( string ) $name, new Route( ...array_values ( $route ) ) );
+		$arguments = array_intersect_key ( $route, array_flip ( $this -> argumentsRoute ) );
+		
+		$this -> collection -> add( ( string ) $name, new Route( ...$arguments ), $route['priority'] );
 	}
 	
 	public function get(): SymfonyCollection
