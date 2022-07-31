@@ -42,25 +42,21 @@ class Router
 	
 	public function getAttributes( NouvuMatcher $matcher ): array
 	{
-		return $matcher -> match( $this -> getPathInfo() );
+		return $this -> getRoutingByName( $matcher -> match( $this -> getPathInfo() )['_route'] );
 	}
 	
 	public function getAttributesNotFound(): array
 	{
-		return $this -> getRoutingByName( $this -> app -> response :: HTTP_NOT_FOUND ); // error404 $this -> app -> response :: HTTP_NOT_FOUND
+		return $this -> getRoutingByName( $this -> app -> response :: HTTP_NOT_FOUND ); // error/404
 	}
 	
 	public function getAttributesError(): array
 	{
-		return $this -> getRoutingByName( $this -> app -> response :: HTTP_INTERNAL_SERVER_ERROR ); // error500 $this -> app -> response :: HTTP_INTERNAL_SERVER_ERROR
+		return $this -> getRoutingByName( $this -> app -> response :: HTTP_INTERNAL_SERVER_ERROR ); // error/500
 	}
 	
 	public function getRoutingByName( string | int $name ): array
 	{
-		// return array_merge ( Arr :: get( $name . '.route.controller', $this -> routing ), [ '_route' => $name ] );
-		
-		// return array_merge ( $this -> routing[$name]['route']['controller'], [ '_route' => $name ] );
-		
 		$this -> routing -> add( $name . '.route.controller', [ '_route' => $name ] );
 		
 		return $this -> routing -> get( $name . '.route.controller' );

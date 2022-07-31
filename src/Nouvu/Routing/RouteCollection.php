@@ -29,12 +29,22 @@ class RouteCollection
 	
 	/*
 		- https://symfony.com/doc/current/routing.html
+		
+		$route = new Route(
+			'/archive/{month}', // path
+			-- [ '_controller' => 'showArchive' ], // default values
+			[ 'month' => '[0-9]{4}-[0-9]{2}', 'subdomain' => 'www|m' ], // requirements
+			[], // options
+			'{subdomain}.example.com', // host
+			[], // schemes
+			[] // methods
+		);
 	*/
 	public function add( string | int $name, array $route )
 	{
-		$arguments = array_intersect_key ( $route, array_flip ( $this -> argumentsRoute ) );
+		$intersect = array_intersect_key ( $route, array_flip ( $this -> argumentsRoute ) );
 		
-		$this -> collection -> add( ( string ) $name, new Route( ...$arguments ), $route['priority'] );
+		$this -> collection -> add( ( string ) $name, new Route( ...$intersect ), $route['priority'] );
 	}
 	
 	public function get(): SymfonyCollection
