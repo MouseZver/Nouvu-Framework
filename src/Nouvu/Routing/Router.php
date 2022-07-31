@@ -42,7 +42,9 @@ class Router
 	
 	public function getAttributes( NouvuMatcher $matcher ): array
 	{
-		return $this -> getRoutingByName( $matcher -> match( $this -> getPathInfo() )['_route'] );
+		$attributes = $matcher -> match( $this -> getPathInfo() );
+		
+		return array_merge ( $attributes, $this -> getRoutingByName( $attributes['_route'] ) );
 	}
 	
 	public function getAttributesNotFound(): array
