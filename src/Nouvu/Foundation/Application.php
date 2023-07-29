@@ -4,48 +4,74 @@ declare ( strict_types = 1 );
 
 namespace Nouvu\Framework\Foundation;
 
+use Symfony\Component\Console\Application AS ConsoleApp;
+use Symfony\Component\Console\Command\Command;
 use Psr\Container\ContainerInterface;
 
-class Application
+use function App\Foundation\Helpers\{ app };
+
+abstract class Application
 {
-	//use ApplicationTrait;
+	protected ContainerInterface $container;
 	
-	public function __construct ( private ContainerInterface $ContainerInterface, array $tools )
-	{
-		foreach ( $tools + [ \App :: class => ( fn( ContainerInterface $ContainerInterface ): self => $this ) ] AS $name => $packaging )
-		{
-			//$this -> setContainer( $name, $packaging );
-			$this -> ContainerInterface -> set( $name, $packaging );
-		}
-	}
+	abstract public function getName(): string;
 	
-	/*protected function setContainer( string $name, callable $packaging ): void
-	{
-		$this -> ContainerInterface -> set( $name, $packaging );
-	}*/
+	abstract protected function getHelpersDir(): string;
 	
-	/*protected function getContainer( string $name ): mixed
-	{
-		return $this -> ContainerInterface -> get( str_replace ( '.', '\\', $name ) );
-	}*/
+	abstract protected function getPackagesDir(): string;
 	
 	public function __set( string $name, callable $value ): void
 	{
-		//$this -> setContainer( $name, $value );
-		$this -> ContainerInterface -> set( $name, $packaging );
+		$this -> container ?-> set( $name, $value );
 	}
 	
 	public function __get( string $name ): mixed
 	{
-		//return $this -> getContainer( $name );
-		return $this -> ContainerInterface -> get( str_replace ( '.', '\\', $name ) );
+		return $this -> container ?-> get( $name );
 	}
 	
-	public function init(): void
+	public function __isset( string $name ): bool
 	{
-		foreach ( $this -> repository ?-> get( 'app.ini_set', [] ) ?? [] AS $option => $value )
+		return ( bool ) $this -> container ?-> has( $name );
+	}
+	
+	public function setContainer( ContainerInterface $container ): void
+	{
+		$this -> container = $container;
+	}
+	
+	abstract protected function initializeHelpers(): void;
+	
+	abstract protected function initializePackages(): void;
+	
+	abstract protected function configureBuilder(): void;
+
+	abstract protected function initializeConfigure(): void;
+	
+	public function boot(): void
+	{
+		$this -> initializeHelpers();
+		
+		$this -> initializePackages();
+		
+		$this -> configureBuilder();
+
+		$this -> initializeConfigure();
+	}
+	
+	/*
+		$console = ( new Application ) -> console( App\Console\Command\Example :: class );
+		$console -> run();
+	*/
+	public function console( Command ...$commands ): ConsoleApp
+	{
+		$console = new ConsoleApp;
+		
+		foreach ( $commands AS $command )
 		{
-			ini_set ( $option, ( string ) $value( $this ) );
+			$console -> add( $command );
 		}
+		
+		return $console;
 	}
 }
