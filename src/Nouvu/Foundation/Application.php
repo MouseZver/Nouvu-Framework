@@ -8,8 +8,6 @@ use Symfony\Component\Console\Application AS ConsoleApp;
 use Symfony\Component\Console\Command\Command;
 use Psr\Container\ContainerInterface;
 
-use function App\Foundation\Helpers\{ app };
-
 abstract class Application
 {
 	protected ContainerInterface $container;
