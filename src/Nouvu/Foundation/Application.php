@@ -12,7 +12,7 @@ use function App\Foundation\Helpers\{ app };
 
 abstract class Application
 {
-	protected $container;
+	protected ContainerInterface $container;
 	
 	abstract public function getName(): string;
 	
