@@ -26,4 +26,6 @@ interface StatementInterface
 	public function get( int $code, callable | string $argument = null ): mixed;
 	
 	public function all( int $code, callable | string $argument = null ): array;
+	
+	public function id(): int;
 }
