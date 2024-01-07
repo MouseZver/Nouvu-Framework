@@ -44,7 +44,7 @@ abstract class Application
 	
 	abstract protected function configureBuilder(): void;
 
-	abstract protected function initializeConfigure(): void;
+	abstract protected function registeringAppConfiguration(): void;
 	
 	public function boot(): void
 	{
@@ -54,7 +54,7 @@ abstract class Application
 		
 		$this -> configureBuilder();
 
-		$this -> initializeConfigure();
+		$this -> registeringAppConfiguration();
 	}
 	
 	/*
